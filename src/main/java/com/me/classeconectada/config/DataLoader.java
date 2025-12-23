@@ -33,7 +33,17 @@ public class DataLoader implements CommandLineRunner {
             return;
         }
         
-        log.info("Initializing database with sample data...");
+        try {
+            log.info("Initializing database with sample data...");
+            initializeData();
+            log.info("Database initialization completed successfully!");
+            log.info("Login credentials: admin@email.com / 123456");
+        } catch (Exception e) {
+            log.warn("Could not initialize database with sample data: " + e.getMessage());
+        }
+    }
+    
+    private void initializeData() {
         
         // Create School Classes
         SchoolClass turmaA = createSchoolClass("Turma A");
@@ -117,9 +127,6 @@ public class DataLoader implements CommandLineRunner {
         createObservation(pedro, turmaB, "Demonstra grande interesse por literatura.");
         
         log.info("Created {} observations", observationRepository.count());
-        
-        log.info("Database initialization completed successfully!");
-        log.info("Login credentials: admin@email.com / 123456");
     }
     
     private SchoolClass createSchoolClass(String name) {

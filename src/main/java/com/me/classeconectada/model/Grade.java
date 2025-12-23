@@ -27,6 +27,7 @@ public class Grade {
     private Subject subject;
     
     @NotNull(message = "Nota é obrigatória")
+    @Column(name = "grade_value")
     private Double value;
     
     private String description;
