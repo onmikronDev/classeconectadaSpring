@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const turmaList = document.getElementById("turmaList");
   const alunosList = document.getElementById("alunosList");
 
@@ -11,86 +11,109 @@ document.addEventListener("DOMContentLoaded", () => {
   const valorNotaInput = document.getElementById("valorNota");
   const notaForm = document.getElementById("notaForm");
 
-  // Modal de Aplicar Observação
-  const observacaoModal = document.getElementById("observacaoModal");
-  const closeObservacaoModal = document.getElementById("closeObservacaoModal");
-  const alunoObservacaoInput = document.getElementById("alunoObservacao");
-  const turmaObservacaoInput = document.getElementById("turmaObservacao");
-  const observacaoInput = document.getElementById("observacao");
-  const observacaoForm = document.getElementById("observacaoForm");
+  let turmaSelecionada = null; // Elemento de turma selecionada
+  let turmaIdSelecionada = null; // ID da turma selecionada
+  let alunoSelecionado = null; // Elemento de aluno selecionado
+  let alunoIdSelecionado = null; // ID do aluno selecionado
 
-  let turmaSelecionada = null; // Turma selecionada
-  let alunoSelecionado = null; // Aluno selecionado
-
-  // Dados simulados
-  const turmas = ["Turma A", "Turma B", "Turma C"];
-  const alunosPorTurma = {
-    "Turma A": ["Alice", "Lucas", "Maria"],
-    "Turma B": ["João", "Ana", "Pedro"],
-    "Turma C": ["Marina", "Rafael", "Carla"],
-  };
+  // ✅ CORRIGIDO: Carregar turmas da API
+  await carregarTurmas();
+  
+  // ✅ CORRIGIDO: Carregar matérias da API
+  await carregarMaterias();
 
   /**
-   * Preenchendo lista de turmas na UI
+   * ✅ CORRIGIDO: Carregar turmas da API
    */
-  turmas.forEach((turma) => {
-    const li = document.createElement("li");
-    li.textContent = turma;
-    li.addEventListener("click", () => selecionarTurma(li, turma));
-    turmaList.appendChild(li);
-  });
-
-  /**
-   * Preenche a lista de alunos de acordo com a turma selecionada
-   * @param {string} turma Turma selecionada
-   */
-  function carregarAlunos(turma) {
-    alunosList.innerHTML = "";
-    const alunos = alunosPorTurma[turma];
-    alunos.forEach((aluno) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-                <span>${aluno}</span>
-                <div class="presence-options">
-                    <button class="present">Presente</button>
-                    <button class="absent">Falta</button>
-                    <button class="justified">Justificada</button>
-                </div>
-            `;
-
-      li.addEventListener("click", () => selecionarAluno(li, aluno));
-
-      const span = li.querySelector("span");
-      li.querySelector(".present").addEventListener("click", () => {
-        span.style.color = "#58D68D";
+  async function carregarTurmas() {
+    try {
+      const response = await fetch('http://localhost:8080/api/classes');
+      if (!response.ok) throw new Error('Erro ao carregar turmas');
+      
+      const turmas = await response.json();
+      
+      turmaList.innerHTML = "";
+      turmas.forEach((turma) => {
+        const li = document.createElement("li");
+        li.textContent = turma.name;
+        li.dataset.turmaId = turma.id;
+        li.addEventListener("click", () => selecionarTurma(li, turma.id));
+        turmaList.appendChild(li);
       });
-      li.querySelector(".absent").addEventListener("click", () => {
-        span.style.color = "#E74C3C";
-      });
-      li.querySelector(".justified").addEventListener("click", () => {
-        span.style.color = "#F1C40F";
-      });
-
-      alunosList.appendChild(li);
-    });
+    } catch (error) {
+      console.error('Erro ao carregar turmas:', error);
+      alert('Erro ao carregar turmas. Verifique se o backend está rodando.');
+    }
   }
 
-  function selecionarTurma(li, turma) {
+  /**
+   * ✅ CORRIGIDO: Carregar matérias da API para o select
+   */
+  async function carregarMaterias() {
+    try {
+      const response = await fetch('http://localhost:8080/api/subjects');
+      if (!response.ok) throw new Error('Erro ao carregar matérias');
+      
+      const materias = await response.json();
+      
+      materiaNotaInput.innerHTML = '<option value="" disabled selected>Selecione uma matéria</option>';
+      materias.forEach(materia => {
+        const option = document.createElement('option');
+        option.value = materia.id;
+        option.textContent = materia.name;
+        materiaNotaInput.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Erro ao carregar matérias:', error);
+      // Manter matérias hardcoded como fallback
+    }
+  }
+
+  /**
+   * ✅ CORRIGIDO: Carregar alunos da turma selecionada
+   */
+  async function carregarAlunos(turmaId) {
+    try {
+      const response = await fetch(`http://localhost:8080/api/classes/${turmaId}/students`);
+      if (!response.ok) throw new Error('Erro ao carregar alunos');
+      
+      const alunos = await response.json();
+      
+      alunosList.innerHTML = "";
+      alunos.forEach((aluno) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${aluno.nome}</span>`;
+        li.dataset.alunoId = aluno.id;
+        li.dataset.alunoNome = aluno.nome;
+        li.addEventListener("click", () => selecionarAluno(li, aluno.id, aluno.nome));
+        alunosList.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Erro ao carregar alunos:', error);
+      alert('Erro ao carregar alunos.');
+    }
+  }
+
+  function selecionarTurma(li, turmaId) {
     if (turmaSelecionada) turmaSelecionada.classList.remove("selected");
     turmaSelecionada = li;
     turmaSelecionada.classList.add("selected");
-    carregarAlunos(turma);
+    turmaIdSelecionada = turmaId;
+    
+    // ✅ CORRIGIDO: Carregar alunos da API
+    carregarAlunos(turmaId);
   }
 
-  function selecionarAluno(li, aluno) {
+  function selecionarAluno(li, alunoId, alunoNome) {
     if (alunoSelecionado) alunoSelecionado.classList.remove("selected");
     alunoSelecionado = li;
     alunoSelecionado.classList.add("selected");
+    alunoIdSelecionado = alunoId;
   }
 
   document.getElementById("notasBtn").addEventListener("click", () => {
     if (alunoSelecionado && turmaSelecionada) {
-      alunoNotaInput.value = alunoSelecionado.querySelector("span").textContent;
+      alunoNotaInput.value = alunoSelecionado.dataset.alunoNome;
       materiaNotaInput.value = "";
       descricaoNotaInput.value = "";
       valorNotaInput.value = "";
@@ -104,45 +127,61 @@ document.addEventListener("DOMContentLoaded", () => {
     notaModal.style.display = "none";
   });
 
-  notaForm.addEventListener("submit", (e) => {
+  // ✅ CORRIGIDO: Enviar nota para API
+  notaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const aluno = alunoNotaInput.value;
-    const materia = materiaNotaInput.value;
+    const materiaId = materiaNotaInput.value;
     const descricao = descricaoNotaInput.value;
-    const nota = valorNotaInput.value;
+    const nota = parseFloat(valorNotaInput.value);
 
-    if (!materia) {
+    if (!materiaId) {
       alert("Por favor, selecione uma matéria.");
       return;
     }
 
-    alert(`Nota enviada:\nAluno: ${aluno}\nMatéria: ${materia}\nDescrição: ${descricao}\nNota: ${nota}`);
-    notaModal.style.display = "none";
-  });
+    // Validação de nota
+    if (nota < 0 || nota > 10) {
+      alert("Nota deve estar entre 0 e 10.");
+      return;
+    }
 
-  document.getElementById("observacoesBtn").addEventListener("click", () => {
-    if (alunoSelecionado && turmaSelecionada) {
-      alunoObservacaoInput.value = alunoSelecionado.querySelector("span").textContent;
-      turmaObservacaoInput.value = turmaSelecionada.textContent;
-      observacaoInput.value = "";
-      observacaoModal.style.display = "flex";
-    } else {
-      alert("Selecione uma turma e um aluno antes de aplicar uma observação.");
+    // ✅ CORRIGIDO: Preparar DTO para API
+    const gradeData = {
+      studentId: alunoIdSelecionado,
+      subjectId: parseInt(materiaId),
+      value: nota,
+      description: descricao,
+      examDate: new Date().toISOString().split('T')[0] // yyyy-MM-dd
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/grades', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(gradeData)
+      });
+
+      if (response.ok) {
+        alert(`Nota enviada com sucesso!`);
+        notaModal.style.display = "none";
+      } else {
+        const error = await response.json();
+        alert(`Erro ao enviar nota: ${error.error || 'Erro desconhecido'}`);
+      }
+    } catch (error) {
+      console.error('Erro ao enviar nota:', error);
+      alert('Erro ao conectar com o servidor.');
     }
   });
 
-  closeObservacaoModal.addEventListener("click", () => {
-    observacaoModal.style.display = "none";
-  });
-
-  observacaoForm.addEventListener("submit", (e) => {
+  // Atualizar botão histórico para passar studentId
+  document.getElementById("historicoBtn").addEventListener("click", (e) => {
     e.preventDefault();
-    const aluno = alunoObservacaoInput.value;
-    const turma = turmaObservacaoInput.value;
-    const observacao = observacaoInput.value;
-
-    alert(`Observação enviada:\nAluno: ${aluno}\nTurma: ${turma}\nObservação: ${observacao}`);
-    observacaoModal.style.display = "none";
+    if (alunoIdSelecionado) {
+      window.location.href = `../html/historico.html?studentId=${alunoIdSelecionado}`;
+    } else {
+      alert("Selecione um aluno para ver o histórico.");
+    }
   });
 
   document.getElementById("voltarBtn").addEventListener("click", () => {
