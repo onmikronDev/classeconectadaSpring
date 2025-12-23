@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ✅ CORRIGIDO: Validação de CPF
+  // ✅ CORRIGIDO: Validação de CPF (completa com verificação de dígitos)
   function validarCPF(cpf) {
     cpf = cpf.replace(/[^\d]/g, '');
     if (cpf.length !== 11) return false;
     
-    // Validação simplificada - verifica apenas formato
+    // Validação completa com verificação de dígitos verificadores
     let soma = 0;
     let resto;
     

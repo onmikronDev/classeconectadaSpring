@@ -82,7 +82,8 @@ public class UserController {
                 
                 // ✅ CORRIGIDO: Vincular turma se turmaId fornecido
                 if (userData.containsKey("turmaId")) {
-                    Long turmaId = ((Number) userData.get("turmaId")).longValue();
+                    Object turmaIdObj = userData.get("turmaId");
+                    Long turmaId = turmaIdObj instanceof Number ? ((Number) turmaIdObj).longValue() : Long.parseLong(turmaIdObj.toString());
                     SchoolClass turma = schoolClassRepository.findById(turmaId)
                         .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
                     student.setTurma(turma);
@@ -101,7 +102,8 @@ public class UserController {
                 
                 // ✅ CORRIGIDO: Vincular turma se turmaId fornecido
                 if (userData.containsKey("turmaId")) {
-                    Long turmaId = ((Number) userData.get("turmaId")).longValue();
+                    Object turmaIdObj = userData.get("turmaId");
+                    Long turmaId = turmaIdObj instanceof Number ? ((Number) turmaIdObj).longValue() : Long.parseLong(turmaIdObj.toString());
                     SchoolClass turma = schoolClassRepository.findById(turmaId)
                         .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
                     teacher.setTurma(turma);
