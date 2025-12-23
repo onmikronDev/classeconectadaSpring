@@ -1,7 +1,7 @@
 # ClasseConectada - Sistema Educacional
 
 ## Tecnologias
-- Spring Boot 3.x
+- Spring Boot 4.0.1
 - MySQL
 - JPA/Hibernate
 - Lombok
