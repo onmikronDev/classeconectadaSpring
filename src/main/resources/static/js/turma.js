@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const turmaList = document.getElementById("turmaList");
   const alunosList = document.getElementById("alunosList");
 
@@ -11,86 +11,115 @@ document.addEventListener("DOMContentLoaded", () => {
   const valorNotaInput = document.getElementById("valorNota");
   const notaForm = document.getElementById("notaForm");
 
-  // Modal de Aplicar Observação
-  const observacaoModal = document.getElementById("observacaoModal");
-  const closeObservacaoModal = document.getElementById("closeObservacaoModal");
-  const alunoObservacaoInput = document.getElementById("alunoObservacao");
-  const turmaObservacaoInput = document.getElementById("turmaObservacao");
-  const observacaoInput = document.getElementById("observacao");
-  const observacaoForm = document.getElementById("observacaoForm");
-
   let turmaSelecionada = null; // Turma selecionada
   let alunoSelecionado = null; // Aluno selecionado
+  let turmas = [];
+  let alunos = [];
+  let subjects = [];
 
-  // Dados simulados
-  const turmas = ["Turma A", "Turma B", "Turma C"];
-  const alunosPorTurma = {
-    "Turma A": ["Alice", "Lucas", "Maria"],
-    "Turma B": ["João", "Ana", "Pedro"],
-    "Turma C": ["Marina", "Rafael", "Carla"],
-  };
+  // Carregar turmas da API
+  async function loadTurmas() {
+    try {
+      const response = await fetch("http://localhost:8080/api/classes");
+      if (response.ok) {
+        turmas = await response.json();
+        renderTurmas();
+      } else {
+        console.error("Erro ao carregar turmas");
+        turmaList.innerHTML = "<li style='color: red;'>Erro ao carregar turmas do servidor</li>";
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+      turmaList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor. Verifique se o backend está rodando.</li>";
+    }
+  }
 
-  /**
-   * Preenchendo lista de turmas na UI
-   */
-  turmas.forEach((turma) => {
-    const li = document.createElement("li");
-    li.textContent = turma;
-    li.addEventListener("click", () => selecionarTurma(li, turma));
-    turmaList.appendChild(li);
-  });
+  // Carregar matérias da API
+  async function loadSubjects() {
+    try {
+      const response = await fetch("http://localhost:8080/api/subjects");
+      if (response.ok) {
+        subjects = await response.json();
+        // Atualizar o select de matérias
+        materiaNotaInput.innerHTML = '<option value="" disabled selected>Selecione uma matéria</option>';
+        subjects.forEach(subject => {
+          const option = document.createElement("option");
+          option.value = subject.id;
+          option.textContent = subject.nome;
+          materiaNotaInput.appendChild(option);
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar matérias:", error);
+    }
+  }
+
+  // Renderizar lista de turmas
+  function renderTurmas() {
+    turmaList.innerHTML = "";
+    if (turmas.length === 0) {
+      turmaList.innerHTML = "<li>Nenhuma turma encontrada</li>";
+      return;
+    }
+    turmas.forEach((turma) => {
+      const li = document.createElement("li");
+      li.textContent = turma.nome;
+      li.addEventListener("click", () => selecionarTurma(li, turma));
+      turmaList.appendChild(li);
+    });
+  }
 
   /**
    * Preenche a lista de alunos de acordo com a turma selecionada
-   * @param {string} turma Turma selecionada
+   * @param {Object} turma Turma selecionada
    */
-  function carregarAlunos(turma) {
+  async function carregarAlunos(turma) {
+    try {
+      const response = await fetch(`http://localhost:8080/api/students/turma/${turma.id}`);
+      if (response.ok) {
+        alunos = await response.json();
+        renderAlunos();
+      } else {
+        console.error("Erro ao carregar alunos");
+        alunosList.innerHTML = "<li style='color: red;'>Erro ao carregar alunos</li>";
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+      alunosList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor</li>";
+    }
+  }
+
+  // Renderizar lista de alunos
+  function renderAlunos() {
     alunosList.innerHTML = "";
-    const alunos = alunosPorTurma[turma];
+    if (alunos.length === 0) {
+      alunosList.innerHTML = "<li>Nenhum aluno encontrado nesta turma</li>";
+      return;
+    }
     alunos.forEach((aluno) => {
       const li = document.createElement("li");
-      li.innerHTML = `
-                <span>${aluno}</span>
-                <div class="presence-options">
-                    <button class="present">Presente</button>
-                    <button class="absent">Falta</button>
-                    <button class="justified">Justificada</button>
-                </div>
-            `;
-
+      li.innerHTML = `<span>${aluno.nome}</span>`;
       li.addEventListener("click", () => selecionarAluno(li, aluno));
-
-      const span = li.querySelector("span");
-      li.querySelector(".present").addEventListener("click", () => {
-        span.style.color = "#58D68D";
-      });
-      li.querySelector(".absent").addEventListener("click", () => {
-        span.style.color = "#E74C3C";
-      });
-      li.querySelector(".justified").addEventListener("click", () => {
-        span.style.color = "#F1C40F";
-      });
-
       alunosList.appendChild(li);
     });
   }
 
   function selecionarTurma(li, turma) {
-    if (turmaSelecionada) turmaSelecionada.classList.remove("selected");
-    turmaSelecionada = li;
-    turmaSelecionada.classList.add("selected");
+    if (turmaSelecionada) turmaSelecionada.element.classList.remove("selected");
+    turmaSelecionada = { element: li, data: turma };
+    turmaSelecionada.element.classList.add("selected");
     carregarAlunos(turma);
   }
 
   function selecionarAluno(li, aluno) {
-    if (alunoSelecionado) alunoSelecionado.classList.remove("selected");
-    alunoSelecionado = li;
-    alunoSelecionado.classList.add("selected");
+    if (alunoSelecionado) alunoSelecionado.element.classList.remove("selected");
+    alunoSelecionado = { element: li, data: aluno };
+    alunoSelecionado.element.classList.add("selected");
   }
 
   document.getElementById("notasBtn").addEventListener("click", () => {
     if (alunoSelecionado && turmaSelecionada) {
-      alunoNotaInput.value = alunoSelecionado.querySelector("span").textContent;
+      alunoNotaInput.value = alunoSelecionado.data.nome;
       materiaNotaInput.value = "";
       descricaoNotaInput.value = "";
       valorNotaInput.value = "";
@@ -104,48 +133,58 @@ document.addEventListener("DOMContentLoaded", () => {
     notaModal.style.display = "none";
   });
 
-  notaForm.addEventListener("submit", (e) => {
+  notaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const aluno = alunoNotaInput.value;
-    const materia = materiaNotaInput.value;
+    const subjectId = materiaNotaInput.value;
     const descricao = descricaoNotaInput.value;
     const nota = valorNotaInput.value;
 
-    if (!materia) {
+    if (!subjectId) {
       alert("Por favor, selecione uma matéria.");
       return;
     }
 
-    alert(`Nota enviada:\nAluno: ${aluno}\nMatéria: ${materia}\nDescrição: ${descricao}\nNota: ${nota}`);
-    notaModal.style.display = "none";
-  });
-
-  document.getElementById("observacoesBtn").addEventListener("click", () => {
-    if (alunoSelecionado && turmaSelecionada) {
-      alunoObservacaoInput.value = alunoSelecionado.querySelector("span").textContent;
-      turmaObservacaoInput.value = turmaSelecionada.textContent;
-      observacaoInput.value = "";
-      observacaoModal.style.display = "flex";
-    } else {
-      alert("Selecione uma turma e um aluno antes de aplicar uma observação.");
+    if (!nota || nota < 0 || nota > 10) {
+      alert("Por favor, insira uma nota válida entre 0 e 10.");
+      return;
     }
-  });
 
-  closeObservacaoModal.addEventListener("click", () => {
-    observacaoModal.style.display = "none";
-  });
+    // Preparar dados para enviar à API
+    const gradeData = {
+      student: { id: alunoSelecionado.data.id },
+      subject: { id: parseInt(subjectId) },
+      value: parseFloat(nota),
+      description: descricao,
+      examDate: new Date().toISOString().split('T')[0]
+    };
 
-  observacaoForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const aluno = alunoObservacaoInput.value;
-    const turma = turmaObservacaoInput.value;
-    const observacao = observacaoInput.value;
+    try {
+      const response = await fetch("http://localhost:8080/api/grades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gradeData),
+      });
 
-    alert(`Observação enviada:\nAluno: ${aluno}\nTurma: ${turma}\nObservação: ${observacao}`);
-    observacaoModal.style.display = "none";
+      if (response.ok) {
+        alert("Nota aplicada com sucesso!");
+        notaModal.style.display = "none";
+        notaForm.reset();
+      } else {
+        alert("Erro ao aplicar nota. Verifique os dados e tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro ao aplicar nota:", error);
+      alert("Erro ao conectar com o servidor.");
+    }
   });
 
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "index.html";
   });
+
+  // Inicializar
+  await loadTurmas();
+  await loadSubjects();
 });
