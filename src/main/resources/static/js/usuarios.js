@@ -1,11 +1,8 @@
-// Dados mockados (simulação de banco de dados)
-let usuarios = [
-  { id:  1, nome: "João Silva", tipo: "professor", email: "joao@email.com", telefone: "(11) 98765-4321", turma: "Turma A", materia: "Matemática" },
-  { id: 2, nome: "Maria Santos", tipo: "aluno", email: "maria@email.com", telefone: "(11) 98765-1234", turma: "Turma B", materia: "" },
-  { id: 3, nome: "Carlos Oliveira", tipo: "diretor", email: "carlos@email.com", telefone: "(11) 98765-5678", turma: "", materia: "" },
-  { id: 4, nome: "Ana Costa", tipo: "professor", email: "ana@email. com", telefone: "(11) 98765-8765", turma: "Turma C", materia: "Português" },
-  { id: 5, nome: "Pedro Lima", tipo: "aluno", email: "pedro@email.com", telefone: "(11) 98765-4444", turma: "Turma A", materia: "" },
-];
+// API Base URL
+const API_URL = "http://localhost:8080/api/users";
+
+// Dados de usuários (serão carregados da API)
+let usuarios = [];
 
 let currentEditId = null;
 
@@ -21,6 +18,28 @@ const editTipo = document.getElementById("editTipo");
 const editTurmaGroup = document.getElementById("editTurmaGroup");
 const editMateriaGroup = document.getElementById("editMateriaGroup");
 
+// Carregar usuários da API
+async function loadUsers() {
+  try {
+    const response = await fetch(API_URL);
+    if (response.ok) {
+      usuarios = await response.json();
+      // Mapear tipo para lowercase para compatibilidade com o frontend
+      usuarios = usuarios.map(user => ({
+        ...user,
+        tipo: user.tipo.toLowerCase()
+      }));
+      renderTable();
+    } else {
+      console.error("Erro ao carregar usuários");
+      tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar usuários do servidor</td></tr>`;
+    }
+  } catch (error) {
+    console.error("Erro ao conectar com o servidor:", error);
+    tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao conectar com o servidor. Verifique se o backend está rodando.</td></tr>`;
+  }
+}
+
 // Renderizar tabela
 function renderTable(filteredUsers = usuarios) {
   tableBody.innerHTML = "";
@@ -35,9 +54,9 @@ function renderTable(filteredUsers = usuarios) {
     row.innerHTML = `
       <td>${user.nome}</td>
       <td><span class="badge ${user.tipo}">${user.tipo}</span></td>
-      <td>${user. email}</td>
+      <td>${user.email}</td>
       <td>${user.telefone}</td>
-      <td>${user.tipo === "professor" ? `${user.turma} - ${user.materia}` : user.tipo === "aluno" ? user. turma : "N/A"}</td>
+      <td>${user.tipo === "professor" ? `${user.turma || "N/A"} - ${user.materia || "N/A"}` : user.tipo === "aluno" ? user.turma || "N/A" : "N/A"}</td>
       <td>
         <div class="action-buttons">
           <button class="edit-btn" onclick="openEditModal(${user.id})">Editar</button>
@@ -66,7 +85,7 @@ function filterUsers() {
 // Abrir modal de edição
 function openEditModal(id) {
   const user = usuarios.find(u => u.id === id);
-  if (! user) return;
+  if (!user) return;
 
   currentEditId = id;
   document.getElementById("editId").value = user.id;
@@ -85,7 +104,7 @@ function openEditModal(id) {
 function updateEditFields() {
   const tipo = editTipo.value;
   editTurmaGroup.style.display = tipo === "professor" || tipo === "aluno" ? "flex" : "none";
-  editMateriaGroup.style. display = tipo === "professor" ?  "flex" : "none";
+  editMateriaGroup.style.display = tipo === "professor" ? "flex" : "none";
 }
 
 // Fechar modal
@@ -95,31 +114,63 @@ function closeModal() {
 }
 
 // Salvar edição
-editForm.addEventListener("submit", (e) => {
+editForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = parseInt(document.getElementById("editId").value);
   const user = usuarios.find(u => u.id === id);
 
   if (user) {
-    user.nome = document.getElementById("editNome").value;
-    user.email = document.getElementById("editEmail").value;
-    user.telefone = document.getElementById("editTelefone").value;
-    user.tipo = document.getElementById("editTipo").value;
-    user.turma = document.getElementById("editTurma").value;
-    user.materia = document.getElementById("editMateria").value;
+    const updatedUser = {
+      ...user,
+      nome: document.getElementById("editNome").value,
+      email: document.getElementById("editEmail").value,
+      telefone: document.getElementById("editTelefone").value,
+      tipo: document.getElementById("editTipo").value.toUpperCase(),
+      turma: document.getElementById("editTurma").value,
+      materia: document.getElementById("editMateria").value
+    };
 
-    renderTable();
-    closeModal();
-    alert("Usuário atualizado com sucesso!");
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      if (response.ok) {
+        await loadUsers();
+        closeModal();
+        alert("Usuário atualizado com sucesso!");
+      } else {
+        alert("Erro ao atualizar usuário.");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      alert("Erro ao conectar com o servidor.");
+    }
   }
 });
 
 // Excluir usuário
-function deleteUser(id) {
-  if (confirm("Tem certeza que deseja excluir este usuário? ")) {
-    usuarios = usuarios. filter(u => u.id !== id);
-    renderTable();
-    alert("Usuário excluído com sucesso!");
+async function deleteUser(id) {
+  if (confirm("Tem certeza que deseja excluir este usuário?")) {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok || response.status === 204) {
+        await loadUsers();
+        alert("Usuário excluído com sucesso!");
+      } else {
+        alert("Erro ao excluir usuário.");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir usuário:", error);
+      alert("Erro ao conectar com o servidor.");
+    }
   }
 }
 
@@ -131,11 +182,11 @@ cancelEdit.addEventListener("click", closeModal);
 editTipo.addEventListener("change", updateEditFields);
 
 // Fechar modal ao clicar fora
-window. addEventListener("click", (e) => {
+window.addEventListener("click", (e) => {
   if (e.target === editModal) {
     closeModal();
   }
 });
 
 // Inicializar
-renderTable();
+loadUsers();
