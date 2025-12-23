@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Toggle mostrar/ocultar senha
   togglePassword.addEventListener("click", () => {
     const type = senhaInput.type === "password" ? "text" : "password";
-    senhaInput. type = type;
-    togglePassword. textContent = type === "password" ? "👁️" : "🙈";
+    senhaInput.type = type;
+    togglePassword.textContent = type === "password" ? "👁️" : "🙈";
   });
 
   // Submissão do formulário
-  loginForm.addEventListener("submit", (e) => {
+  loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -20,33 +20,51 @@ document.addEventListener("DOMContentLoaded", () => {
     const lembrarMe = document.getElementById("lembrarMe").checked;
 
     // Validação simples
-    if (!email || ! senha) {
+    if (!email || !senha) {
       showError("Por favor, preencha todos os campos.");
       return;
     }
 
-    // Simulação de login (substitua com sua lógica real)
-    if (email === "admin@email.com" && senha === "123456") {
-      if (lembrarMe) {
-        localStorage.setItem("lembrarMe", "true");
-        localStorage.setItem("email", email);
-      }
+    try {
+      // Chamada à API do Spring
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, senha }),
+      });
 
-      // Sucesso - redireciona
-      alert("Login realizado com sucesso!");
-      window.location.href = "../html/index.html";
-    } else {
-      showError("Email ou senha incorretos.");
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Salvar dados do usuário no localStorage
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        if (lembrarMe) {
+          localStorage.setItem("lembrarMe", "true");
+          localStorage.setItem("email", email);
+        }
+
+        // Sucesso - redireciona
+        alert("Login realizado com sucesso!");
+        window.location.href = "../html/index.html";
+      } else {
+        showError(data.message || "Email ou senha incorretos.");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      showError("Erro ao conectar com o servidor. Verifique se o backend está rodando.");
     }
   });
 
   // Função para mostrar erro
   function showError(message) {
-    errorMessage. textContent = message;
+    errorMessage.textContent = message;
     errorMessage.style.display = "block";
 
     setTimeout(() => {
-      errorMessage. style.display = "none";
+      errorMessage.style.display = "none";
     }, 4000);
   }
 
