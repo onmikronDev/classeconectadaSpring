@@ -44,6 +44,8 @@ public class DataLoader implements CommandLineRunner {
     }
     
     private void initializeData() {
+        // SECURITY NOTE: Default passwords are plain text for demo/educational purposes only
+        // In a production environment, passwords should be hashed using BCrypt
         
         // Create School Classes
         SchoolClass turmaA = createSchoolClass("Turma A");

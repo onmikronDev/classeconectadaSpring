@@ -78,6 +78,8 @@ public class UserService {
     
     public User authenticate(String email, String senha) {
         Optional<User> user = userRepository.findByEmail(email);
+        // Note: In production, passwords should be hashed using BCrypt or similar
+        // For this demo/educational system, plain text comparison is used for simplicity
         if (user.isPresent() && user.get().getSenha().equals(senha) && user.get().getActive()) {
             return user.get();
         }

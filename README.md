@@ -262,6 +262,8 @@ A aplicação carrega automaticamente dados de teste na primeira execução:
 
 **Senha padrão para todos:** 123456
 
+⚠️ **NOTA DE SEGURANÇA:** Este sistema utiliza senhas em texto simples para fins educacionais e de demonstração. Em um ambiente de produção, as senhas devem ser criptografadas usando BCrypt ou algoritmo similar.
+
 ## 🐛 Resolução de Problemas
 
 ### Erro de conexão com MySQL

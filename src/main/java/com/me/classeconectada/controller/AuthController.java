@@ -25,7 +25,18 @@ public class AuthController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Login realizado com sucesso");
-            response.put("user", user);
+            
+            // Return user data without password
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("nome", user.getNome());
+            userData.put("email", user.getEmail());
+            userData.put("cpf", user.getCpf());
+            userData.put("telefone", user.getTelefone());
+            userData.put("tipo", user.getTipo());
+            userData.put("active", user.getActive());
+            
+            response.put("user", userData);
             return ResponseEntity.ok(response);
         } else {
             Map<String, Object> response = new HashMap<>();
