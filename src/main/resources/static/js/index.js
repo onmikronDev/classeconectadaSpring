@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     turmas.forEach((turma) => {
       const li = document.createElement("li");
-      li.textContent = turma.nome;
+      li.textContent = turma.name;
       li.addEventListener("click", () => exibirAlunos(turma));
       turmasList.appendChild(li);
     });
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Agrupar notas por matéria e calcular média
         const notasPorMateria = {};
         grades.forEach(grade => {
-          const materia = grade.subject?.nome || "Sem matéria";
+          const materia = grade.subject?.name || "Sem matéria";
           if (!notasPorMateria[materia]) {
             notasPorMateria[materia] = [];
           }

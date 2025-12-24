@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         subjects.forEach(subject => {
           const option = document.createElement("option");
           option.value = subject.id;
-          option.textContent = subject.nome;
+          option.textContent = subject.name;
           materiaNotaInput.appendChild(option);
         });
       }
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     turmas.forEach((turma) => {
       const li = document.createElement("li");
-      li.textContent = turma.nome;
+      li.textContent = turma.name;
       li.addEventListener("click", () => selecionarTurma(li, turma));
       turmaList.appendChild(li);
     });
