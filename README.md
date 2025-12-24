@@ -11,7 +11,6 @@ ClasseConectada é um sistema educacional moderno que permite gerenciar:
 - 📚 Turmas
 - 📖 Matérias/Disciplinas
 - 📊 Notas
-- 📝 Observações
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -83,7 +82,6 @@ src/main/java/com/me/classeconectada/
 │   ├── SchoolClass.java             # Turma
 │   ├── Subject.java                 # Matéria
 │   ├── Grade.java                   # Nota
-│   ├── Observation.java             # Observação
 │   └── UserType.java                # Enum de tipos de usuário
 ├── repository/                      # Repositórios JPA
 ├── service/                         # Serviços (lógica de negócio)
@@ -200,17 +198,6 @@ src/main/resources/
 }
 ```
 
-### Observações
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/observations` | Listar todas as observações |
-| GET | `/api/observations/{id}` | Buscar observação por ID |
-| GET | `/api/observations/student/{studentId}` | Observações de um aluno |
-| GET | `/api/observations/turma/{turmaId}` | Observações de uma turma |
-| POST | `/api/observations` | Criar nova observação |
-| PUT | `/api/observations/{id}` | Atualizar observação |
-| DELETE | `/api/observations/{id}` | Deletar observação |
-
 ## 🎯 Funcionalidades
 
 ### Telas do Sistema
@@ -220,7 +207,6 @@ src/main/resources/
 - **Cadastro** (cadrastro.html) - Cadastro de usuários
 - **Usuários** (usuarios.html) - Gerenciamento de usuários
 - **Histórico** (historico.html) - Notas e histórico do aluno
-- **Observações** (observacoes.html) - Observações sobre alunos
 
 ### Recursos do Backend
 - ✅ API REST completa com CRUD
