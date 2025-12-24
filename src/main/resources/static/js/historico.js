@@ -1,17 +1,35 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const materiasList = document.getElementById("materiasList");
   const notasList = document.getElementById("notasList");
+  const historicoTitle = document.getElementById("historicoTitle");
 
-  // Obter dados do usuário logado do localStorage
-  const userStr = localStorage.getItem("user");
-  if (!userStr) {
-    alert("Usuário não autenticado. Redirecionando para login.");
-    window.location.href = "Login.html";
-    return;
+  // Check if there's a selected student from turma page
+  const selectedStudentStr = localStorage.getItem("selectedStudent");
+  let studentId;
+  let studentName;
+
+  if (selectedStudentStr) {
+    // User came from turma page with selected student
+    const selectedStudent = JSON.parse(selectedStudentStr);
+    studentId = selectedStudent.id;
+    studentName = selectedStudent.nome;
+    // Clear the selected student from localStorage after reading
+    localStorage.removeItem("selectedStudent");
+  } else {
+    // Fallback: try to get logged in user
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      alert("Nenhum aluno selecionado. Redirecionando para página de turmas.");
+      window.location.href = "turma.html";
+      return;
+    }
+    const user = JSON.parse(userStr);
+    studentId = user.id;
+    studentName = user.nome;
   }
 
-  const user = JSON.parse(userStr);
-  const studentId = user.id;
+  // Update the title with student name
+  historicoTitle.textContent = `Histórico de ${studentName}`;
 
   // Buscar notas do aluno da API
   let notasPorMateria = {};
