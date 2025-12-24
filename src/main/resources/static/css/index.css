@@ -37,8 +37,17 @@ body {
   display: flex;
   justify-content: left;
   align-items: center;
+  gap: 15px;
   width: 100%;
-  max-width: 200px;
+  max-width: 400px;
+}
+
+.project-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Logo */

@@ -63,15 +63,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Inicialmente mostra todas as notas
-  Object.entries(notasPorMateria).forEach(([materia, notas]) => {
-    notas.forEach((nota) => {
-      const li = document.createElement("li");
-      li.textContent = `${materia}: Nota ${nota.valor} - ${nota.descricao || "Sem descrição"}`;
-      notasList.appendChild(li);
-    });
-  });
-
   // Botão Voltar
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "turma.html"; // Exemplo: volta para lista de turmas
