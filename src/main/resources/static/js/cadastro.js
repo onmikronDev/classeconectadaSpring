@@ -36,6 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
 
+    // Validar confirmação de senha
+    if (data.senha !== data.confirmaSenha) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
     // Mapear tipo de usuário
     let tipo;
     if (activeTab === "professor") {
@@ -48,17 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Preparar dados para enviar à API
     const userData = {
-      nome: data.nome,
+      nome: data.nomeCompleto,
       email: data.email,
       cpf: data.cpf,
       telefone: data.telefone,
       senha: data.senha,
+      endereco: data.endereco,
+      pai: data.pai,
+      mae: data.mae,
       tipo: tipo,
       active: true
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
