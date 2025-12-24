@@ -101,7 +101,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const nameSpan = document.createElement("span");
       nameSpan.textContent = aluno.nome;
       nameSpan.className = "student-name";
-      nameSpan.dataset.attendanceStatus = aluno.attendanceStatus || "none";
+      
+      // Normalize attendance status to lowercase for CSS selector
+      const attendanceStatus = aluno.attendanceStatus ? aluno.attendanceStatus.toLowerCase() : "";
+      nameSpan.dataset.attendanceStatus = attendanceStatus;
       
       const presenceOptions = document.createElement("div");
       presenceOptions.className = "presence-options";
@@ -249,9 +252,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (response.ok) {
-        // Update the visual status
-        nameSpan.dataset.attendanceStatus = attendanceType.toLowerCase();
-        aluno.attendanceStatus = attendanceType.toLowerCase();
+        // Update the visual status - normalize to lowercase once
+        const normalizedStatus = attendanceType.toLowerCase();
+        nameSpan.dataset.attendanceStatus = normalizedStatus;
+        aluno.attendanceStatus = normalizedStatus;
         
         console.log(`Presença registrada: ${attendanceType} para ${aluno.nome}`);
       } else {

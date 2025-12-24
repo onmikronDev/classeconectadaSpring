@@ -3,6 +3,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const notasList = document.getElementById("notasList");
   const frequenciaList = document.getElementById("frequenciaList");
 
+  // Get colors from CSS variables once
+  const styles = getComputedStyle(document.body);
+  const ATTENDANCE_COLORS = {
+    PRESENTE: styles.getPropertyValue('--color-presente')?.trim() || '#58D68D',
+    FALTA: styles.getPropertyValue('--color-falta')?.trim() || '#E74C3C',
+    JUSTIFICADA: styles.getPropertyValue('--color-justificada')?.trim() || '#F1C40F'
+  };
+
   // Obter dados do usuário logado do localStorage
   const userStr = localStorage.getItem("user");
   if (!userStr) {
@@ -55,12 +63,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (attendanceRecords.length === 0) {
         frequenciaList.innerHTML = "<li>Nenhum registro de frequência encontrado</li>";
       } else {
-        // Get colors from CSS variables
-        const styles = getComputedStyle(document.body);
-        const colorPresente = styles.getPropertyValue('--color-presente') || '#58D68D';
-        const colorFalta = styles.getPropertyValue('--color-falta') || '#E74C3C';
-        const colorJustificada = styles.getPropertyValue('--color-justificada') || '#F1C40F';
-        
         // Calcular estatísticas
         const presencas = attendanceRecords.filter(obs => obs.attendanceType === "PRESENTE").length;
         const faltas = attendanceRecords.filter(obs => obs.attendanceType === "FALTA").length;
@@ -75,8 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Exibir registros individuais
         attendanceRecords.forEach(obs => {
           const li = document.createElement("li");
-          let color = obs.attendanceType === "PRESENTE" ? colorPresente : 
-                      obs.attendanceType === "FALTA" ? colorFalta : colorJustificada;
+          const color = ATTENDANCE_COLORS[obs.attendanceType] || ATTENDANCE_COLORS.PRESENTE;
           li.innerHTML = `<span style="color: ${color}; font-weight: bold;">${obs.attendanceType}</span> - ${obs.date || "Sem data"}`;
           frequenciaList.appendChild(li);
         });
