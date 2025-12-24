@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "observations")
+@Table(name = "attendances")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Observation {
+public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,12 +21,10 @@ public class Observation {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
     
-    @ManyToOne
-    @JoinColumn(name = "turma_id")
-    private SchoolClass turma;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AttendanceStatus status;
     
-    @Column(length = 1000)
-    private String content;
-    
+    @Column(nullable = false)
     private LocalDate date;
 }

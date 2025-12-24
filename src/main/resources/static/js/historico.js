@@ -50,6 +50,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     materiasList.appendChild(li);
   });
 
+  // Load and display attendance statistics
+  try {
+    const statsResponse = await fetch(`http://localhost:8080/api/attendances/student/${studentId}/stats`);
+    if (statsResponse.ok) {
+      const stats = await statsResponse.json();
+      const statsLi = document.createElement("li");
+      statsLi.style.backgroundColor = '#2E6264';
+      statsLi.style.borderLeft = '4px solid #58D68D';
+      statsLi.style.fontWeight = 'bold';
+      statsLi.innerHTML = `
+        <div style="padding: 10px;">
+          <div>📊 Estatísticas de Presença</div>
+          <div style="margin-top: 5px;">✅ Presenças: ${stats.present}</div>
+          <div>❌ Faltas: ${stats.absent}</div>
+          <div>📝 Justificadas: ${stats.justified}</div>
+        </div>
+      `;
+      materiasList.appendChild(statsLi);
+    }
+  } catch (error) {
+    console.error("Erro ao carregar estatísticas de presença:", error);
+  }
+
   /**
    * Filtra as notas com base na matéria selecionada
    * @param {string} materia Nome da matéria
