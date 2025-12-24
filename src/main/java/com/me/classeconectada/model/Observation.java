@@ -29,4 +29,14 @@ public class Observation {
     private String content;
     
     private LocalDate date;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "attendance_type")
+    private AttendanceType attendanceType;
+    
+    public enum AttendanceType {
+        PRESENTE,
+        FALTA,
+        JUSTIFICADA
+    }
 }
