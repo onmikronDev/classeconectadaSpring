@@ -12,6 +12,7 @@
 
   <section class="button-section">
     <button class="button" id="notasBtn">Aplicar Notas</button>
+    <button class="button" id="observacoesBtn">Observações</button>
     <button class="button" id="historicoBtn" onclick="window.location.href='../html/historico.html'">Histórico</button> <!-- Botão ajustado -->
     <button class="button" id="voltarBtn" onclick="window.location.href='../html/index.html'">Voltar</button>
   </section>
@@ -68,6 +69,31 @@
         <input type="number" id="valorNota" name="valorNota" min="0" max="10">
       </div>
       <button type="submit" class="submit-button">Enviar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de Observações -->
+<div id="observacoesModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeObservacoesModal">&times;</span>
+    <h2>Observações do Aluno</h2>
+    <div class="form-group">
+      <label for="alunoObservacao">Aluno:</label>
+      <input type="text" id="alunoObservacao" name="alunoObservacao" readonly>
+    </div>
+    <div class="observacoes-list-container">
+      <h3>Observações Registradas:</h3>
+      <ul id="observacoesList" class="observacoes-list">
+        <!-- JS irá preencher esta lista -->
+      </ul>
+    </div>
+    <form id="observacaoForm">
+      <div class="form-group">
+        <label for="novaObservacao">Adicionar Nova Observação:</label>
+        <textarea id="novaObservacao" name="novaObservacao" rows="4"></textarea>
+      </div>
+      <button type="submit" class="submit-button">Adicionar Observação</button>
     </form>
   </div>
 </div>

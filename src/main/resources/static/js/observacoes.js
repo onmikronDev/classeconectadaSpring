@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     observacoes.forEach((obs) => {
       const li = document.createElement("li");
-      li.textContent = `${obs.student?.nome || "Aluno desconhecido"} - ${obs.observation || "Sem descrição"} (${obs.date || "Sem data"})`;
+      li.textContent = `${obs.student?.nome || "Aluno desconhecido"} - ${obs.content || "Sem descrição"} (${obs.date || "Sem data"})`;
       li.addEventListener("click", () => selecionarObservacao(li, obs));
       observacoesList.appendChild(li);
     });
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("visualizarBtn").addEventListener("click", () => {
     if (observacaoSelecionada) {
       const obs = observacaoSelecionada.data;
-      alert(`Observação:\nAluno: ${obs.student?.nome || "Desconhecido"}\nObservação: ${obs.observation || "Sem descrição"}\nData: ${obs.date || "Sem data"}`);
+      alert(`Observação:\nAluno: ${obs.student?.nome || "Desconhecido"}\nObservação: ${obs.content || "Sem descrição"}\nData: ${obs.date || "Sem data"}`);
     } else {
       alert("Selecione uma observação para visualizar.");
     }
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("editarBtn").addEventListener("click", () => {
     if (observacaoSelecionada) {
       const obs = observacaoSelecionada.data;
-      const novaObservacao = prompt("Editar observação:", obs.observation);
+      const novaObservacao = prompt("Editar observação:", obs.content);
       if (novaObservacao !== null && novaObservacao.trim() !== "") {
         editarObservacao(obs.id, novaObservacao);
       }
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         body: JSON.stringify({
           ...obs,
-          observation: novaObservacao
+          content: novaObservacao
         }),
       });
 
