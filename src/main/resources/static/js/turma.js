@@ -11,6 +11,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const valorNotaInput = document.getElementById("valorNota");
   const notaForm = document.getElementById("notaForm");
 
+  // Modal de Observações
+  const observacoesModal = document.getElementById("observacoesModal");
+  const closeObservacoesModal = document.getElementById("closeObservacoesModal");
+  const alunoObservacaoInput = document.getElementById("alunoObservacao");
+  const observacoesList = document.getElementById("observacoesList");
+  const observacaoForm = document.getElementById("observacaoForm");
+  const novaObservacaoInput = document.getElementById("novaObservacao");
+
   let turmaSelecionada = null; // Turma selecionada
   let alunoSelecionado = null; // Aluno selecionado
   let turmas = [];
@@ -182,6 +190,96 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "index.html";
+  });
+
+  // Botão Observações
+  document.getElementById("observacoesBtn").addEventListener("click", async () => {
+    if (alunoSelecionado && turmaSelecionada) {
+      alunoObservacaoInput.value = alunoSelecionado.data.nome;
+      novaObservacaoInput.value = "";
+      await loadObservacoes();
+      observacoesModal.style.display = "flex";
+    } else {
+      alert("Selecione uma turma e um aluno para visualizar as observações.");
+    }
+  });
+
+  closeObservacoesModal.addEventListener("click", () => {
+    observacoesModal.style.display = "none";
+  });
+
+  // Carregar observações do aluno
+  async function loadObservacoes() {
+    try {
+      const response = await fetch(`http://localhost:8080/api/observations/student/${alunoSelecionado.data.id}`);
+      if (response.ok) {
+        const observacoes = await response.json();
+        renderObservacoes(observacoes);
+      } else {
+        console.error("Erro ao carregar observações");
+        observacoesList.innerHTML = "<li style='color: #E74C3C;'>Erro ao carregar observações</li>";
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+      observacoesList.innerHTML = "<li style='color: #E74C3C;'>Erro ao conectar com o servidor</li>";
+    }
+  }
+
+  // Renderizar lista de observações
+  function renderObservacoes(observacoes) {
+    observacoesList.innerHTML = "";
+    if (observacoes.length === 0) {
+      observacoesList.innerHTML = "<li>Nenhuma observação registrada para este aluno</li>";
+      return;
+    }
+    
+    observacoes.forEach((obs) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="obs-content">${obs.content || "Sem descrição"}</div>
+        <span class="obs-date">${obs.date ? new Date(obs.date).toLocaleDateString('pt-BR') : "Sem data"}</span>
+      `;
+      observacoesList.appendChild(li);
+    });
+  }
+
+  // Adicionar nova observação
+  observacaoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const content = novaObservacaoInput.value.trim();
+
+    if (!content) {
+      alert("Por favor, insira uma observação.");
+      return;
+    }
+
+    const observacaoData = {
+      student: { id: alunoSelecionado.data.id },
+      turma: { id: turmaSelecionada.data.id },
+      content: content,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/api/observations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(observacaoData),
+      });
+
+      if (response.ok) {
+        alert("Observação adicionada com sucesso!");
+        novaObservacaoInput.value = "";
+        await loadObservacoes();
+      } else {
+        alert("Erro ao adicionar observação. Verifique os dados e tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar observação:", error);
+      alert("Erro ao conectar com o servidor.");
+    }
   });
 
   // Inicializar
