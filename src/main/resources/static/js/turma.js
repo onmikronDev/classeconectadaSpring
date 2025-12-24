@@ -98,7 +98,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     alunos.forEach((aluno) => {
       const li = document.createElement("li");
-      li.innerHTML = `<span>${aluno.nome}</span>`;
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = aluno.nome;
+      nameSpan.className = "student-name";
+      nameSpan.dataset.attendanceStatus = aluno.attendanceStatus || "none";
+      
+      const presenceOptions = document.createElement("div");
+      presenceOptions.className = "presence-options";
+      
+      const presentBtn = document.createElement("button");
+      presentBtn.textContent = "P";
+      presentBtn.className = "present";
+      presentBtn.title = "Presente";
+      presentBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        marcarPresenca(aluno, nameSpan, "PRESENTE");
+      });
+      
+      const absentBtn = document.createElement("button");
+      absentBtn.textContent = "F";
+      absentBtn.className = "absent";
+      absentBtn.title = "Falta";
+      absentBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        marcarPresenca(aluno, nameSpan, "FALTA");
+      });
+      
+      const justifiedBtn = document.createElement("button");
+      justifiedBtn.textContent = "J";
+      justifiedBtn.className = "justified";
+      justifiedBtn.title = "Justificada";
+      justifiedBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        marcarPresenca(aluno, nameSpan, "JUSTIFICADA");
+      });
+      
+      presenceOptions.appendChild(presentBtn);
+      presenceOptions.appendChild(absentBtn);
+      presenceOptions.appendChild(justifiedBtn);
+      
+      li.appendChild(nameSpan);
+      li.appendChild(presenceOptions);
       li.addEventListener("click", () => selecionarAluno(li, aluno));
       alunosList.appendChild(li);
     });
@@ -183,6 +223,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "index.html";
   });
+
+  // Marcar presença do aluno
+  async function marcarPresenca(aluno, nameSpan, attendanceType) {
+    if (!turmaSelecionada) {
+      alert("Selecione uma turma primeiro.");
+      return;
+    }
+
+    const observationData = {
+      student: { id: aluno.id },
+      turma: { id: turmaSelecionada.data.id },
+      content: `Presença marcada como: ${attendanceType}`,
+      date: new Date().toISOString().split('T')[0],
+      attendanceType: attendanceType
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/api/observations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(observationData),
+      });
+
+      if (response.ok) {
+        // Update the visual status
+        nameSpan.dataset.attendanceStatus = attendanceType.toLowerCase();
+        aluno.attendanceStatus = attendanceType.toLowerCase();
+        
+        // Apply color to the name based on attendance type
+        nameSpan.style.color = attendanceType === "PRESENTE" ? "#58D68D" : 
+                               attendanceType === "FALTA" ? "#E74C3C" : "#F1C40F";
+        
+        console.log(`Presença registrada: ${attendanceType} para ${aluno.nome}`);
+      } else {
+        alert("Erro ao registrar presença.");
+      }
+    } catch (error) {
+      console.error("Erro ao registrar presença:", error);
+      alert("Erro ao conectar com o servidor.");
+    }
+  }
 
   // Inicializar
   await loadTurmas();

@@ -130,6 +130,24 @@ body {
   background-color: #2C5054;
 }
 
+/* Student name styling */
+.student-name {
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.student-name[data-attendance-status="presente"] {
+  color: #58D68D !important;
+}
+
+.student-name[data-attendance-status="falta"] {
+  color: #E74C3C !important;
+}
+
+.student-name[data-attendance-status="justificada"] {
+  color: #F1C40F !important;
+}
+
 /* Botões de Presença ao lado dos alunos */
 .presence-options {
   display: flex;
