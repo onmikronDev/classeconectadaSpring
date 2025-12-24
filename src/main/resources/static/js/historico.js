@@ -55,6 +55,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (attendanceRecords.length === 0) {
         frequenciaList.innerHTML = "<li>Nenhum registro de frequência encontrado</li>";
       } else {
+        // Get colors from CSS variables
+        const styles = getComputedStyle(document.body);
+        const colorPresente = styles.getPropertyValue('--color-presente') || '#58D68D';
+        const colorFalta = styles.getPropertyValue('--color-falta') || '#E74C3C';
+        const colorJustificada = styles.getPropertyValue('--color-justificada') || '#F1C40F';
+        
         // Calcular estatísticas
         const presencas = attendanceRecords.filter(obs => obs.attendanceType === "PRESENTE").length;
         const faltas = attendanceRecords.filter(obs => obs.attendanceType === "FALTA").length;
@@ -69,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Exibir registros individuais
         attendanceRecords.forEach(obs => {
           const li = document.createElement("li");
-          let color = obs.attendanceType === "PRESENTE" ? "#58D68D" : 
-                      obs.attendanceType === "FALTA" ? "#E74C3C" : "#F1C40F";
+          let color = obs.attendanceType === "PRESENTE" ? colorPresente : 
+                      obs.attendanceType === "FALTA" ? colorFalta : colorJustificada;
           li.innerHTML = `<span style="color: ${color}; font-weight: bold;">${obs.attendanceType}</span> - ${obs.date || "Sem data"}`;
           frequenciaList.appendChild(li);
         });

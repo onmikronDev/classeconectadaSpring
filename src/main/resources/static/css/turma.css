@@ -8,6 +8,11 @@ body {
   height: 100vh; /* Ocupa toda a altura */
   display: flex;
   flex-direction: column; /* Layout vertical */
+  
+  /* Color variables for attendance status */
+  --color-presente: #58D68D;
+  --color-falta: #E74C3C;
+  --color-justificada: #F1C40F;
 }
 
 /* Cabeçalho */
@@ -137,15 +142,15 @@ body {
 }
 
 .student-name[data-attendance-status="presente"] {
-  color: #58D68D !important;
+  color: var(--color-presente, #58D68D) !important;
 }
 
 .student-name[data-attendance-status="falta"] {
-  color: #E74C3C !important;
+  color: var(--color-falta, #E74C3C) !important;
 }
 
 .student-name[data-attendance-status="justificada"] {
-  color: #F1C40F !important;
+  color: var(--color-justificada, #F1C40F) !important;
 }
 
 /* Botões de Presença ao lado dos alunos */
@@ -166,15 +171,15 @@ body {
 }
 
 .presence-options .present {
-  background-color: #58D68D; /* Verde claro para presença */
+  background-color: var(--color-presente, #58D68D); /* Verde claro para presença */
 }
 
 .presence-options .absent {
-  background-color: #E74C3C; /* Vermelho para falta */
+  background-color: var(--color-falta, #E74C3C); /* Vermelho para falta */
 }
 
 .presence-options .justified {
-  background-color: #F1C40F; /* Amarelo para justificativa */
+  background-color: var(--color-justificada, #F1C40F); /* Amarelo para justificativa */
 }
 
 .presence-options button:hover {

@@ -253,10 +253,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         nameSpan.dataset.attendanceStatus = attendanceType.toLowerCase();
         aluno.attendanceStatus = attendanceType.toLowerCase();
         
-        // Apply color to the name based on attendance type
-        nameSpan.style.color = attendanceType === "PRESENTE" ? "#58D68D" : 
-                               attendanceType === "FALTA" ? "#E74C3C" : "#F1C40F";
-        
         console.log(`Presença registrada: ${attendanceType} para ${aluno.nome}`);
       } else {
         alert("Erro ao registrar presença.");

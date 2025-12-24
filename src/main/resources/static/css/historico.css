@@ -8,6 +8,11 @@ body {
   display: flex;
   flex-direction: column; /* Layout flex vertical */
   min-height: 100vh; /* Altura total da viewport */
+  
+  /* Color variables for attendance status */
+  --color-presente: #58D68D;
+  --color-falta: #E74C3C;
+  --color-justificada: #F1C40F;
 }
 
 /* Cabeçalho */
