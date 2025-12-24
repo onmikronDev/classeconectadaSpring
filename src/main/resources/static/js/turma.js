@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     turmas.forEach((turma) => {
       const li = document.createElement("li");
-      li.textContent = turma.nome;
+      li.textContent = turma.name;
       li.addEventListener("click", () => selecionarTurma(li, turma));
       turmaList.appendChild(li);
     });
@@ -126,6 +126,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       notaModal.style.display = "flex";
     } else {
       alert("Selecione uma turma e um aluno antes de aplicar uma nota.");
+    }
+  });
+
+  document.getElementById("historicoBtn").addEventListener("click", () => {
+    if (alunoSelecionado) {
+      // Save selected student to localStorage for historico page
+      localStorage.setItem("selectedStudent", JSON.stringify(alunoSelecionado.data));
+      window.location.href = "../html/historico.html";
+    } else {
+      alert("Selecione um aluno antes de visualizar o histórico.");
     }
   });
 
