@@ -16,10 +16,11 @@ ClasseConectada é um sistema educacional moderno que permite gerenciar:
 ## 🛠️ Tecnologias Utilizadas
 
 - **Backend:**
-  - Spring Boot 4.0.1
+  - Spring Boot 3.2.1
   - Spring Data JPA
   - Spring Web
   - Spring Validation
+  - Spring Security (BCrypt)
   - MySQL 8.x
   - Lombok
   - Maven
@@ -74,7 +75,8 @@ mvnw.cmd spring-boot:run
 src/main/java/com/me/classeconectada/
 ├── ClasseConectadaApplication.java  # Classe principal
 ├── config/
-│   └── DataLoader.java              # Carrega dados iniciais
+│   ├── DataLoader.java              # Carrega dados iniciais
+│   └── SecurityConfig.java          # Configuração de segurança (BCrypt)
 ├── model/                           # Entidades JPA
 │   ├── User.java                    # Classe base de usuário
 │   ├── Student.java                 # Aluno (extends User)
@@ -88,7 +90,11 @@ src/main/java/com/me/classeconectada/
 ├── repository/                      # Repositórios JPA
 ├── service/                         # Serviços (lógica de negócio)
 ├── controller/                      # Controllers REST
-└── dto/                            # Data Transfer Objects
+├── dto/                             # Data Transfer Objects
+├── exception/                       # Tratamento de exceções
+│   └── GlobalExceptionHandler.java  # Handler global de exceções
+└── util/                           # Utilitários
+    └── CpfValidator.java            # Validador de CPF
 
 src/main/resources/
 ├── application.properties           # Configurações
@@ -98,6 +104,22 @@ src/main/resources/
     ├── js/
     └── img/
 ```
+
+## 🔒 Segurança e Validações
+
+### Segurança Implementada
+- **BCrypt Password Encoding**: Todas as senhas são criptografadas usando BCrypt
+- **Validação de Email Único**: Impede emails duplicados no sistema
+- **Validação de CPF Único**: Impede CPFs duplicados no sistema
+- **Validação de Formato de CPF**: Verifica dígitos verificadores do CPF brasileiro
+- **Tratamento Global de Exceções**: Respostas de erro padronizadas e seguras
+
+### Validações nos Formulários
+- Campos obrigatórios validados no frontend e backend
+- Confirmação de senha no cadastro
+- Formato de email validado
+- CPF validado com verificação de dígitos
+- Notas limitadas entre 0 e 10
 
 ## 🌐 Endpoints da API
 
@@ -217,7 +239,7 @@ src/main/resources/
 - **Login** (Login.html) - Autenticação de usuários
 - **Dashboard** (index.html) - Menu principal
 - **Turmas** (turma.html) - Gestão de turmas e alunos
-- **Cadastro** (cadrastro.html) - Cadastro de usuários
+- **Cadastro** (cadastro.html) - Cadastro de usuários
 - **Usuários** (usuarios.html) - Gerenciamento de usuários
 - **Histórico** (historico.html) - Notas e histórico do aluno
 - **Observações** (observacoes.html) - Observações sobre alunos
@@ -225,6 +247,10 @@ src/main/resources/
 ### Recursos do Backend
 - ✅ API REST completa com CRUD
 - ✅ Validação de dados com Bean Validation
+- ✅ Criptografia de senhas com BCrypt
+- ✅ Validação de CPF com verificação de dígitos
+- ✅ Validação de email e CPF únicos
+- ✅ Tratamento global de exceções
 - ✅ Herança de entidades (User → Student, Teacher, Director)
 - ✅ Relacionamentos JPA (OneToMany, ManyToOne)
 - ✅ Soft Delete (campo active)
@@ -262,7 +288,7 @@ A aplicação carrega automaticamente dados de teste na primeira execução:
 
 **Senha padrão para todos:** 123456
 
-⚠️ **NOTA DE SEGURANÇA:** Este sistema utiliza senhas em texto simples para fins educacionais e de demonstração. Em um ambiente de produção, as senhas devem ser criptografadas usando BCrypt ou algoritmo similar.
+✅ **SEGURANÇA:** Este sistema utiliza criptografia BCrypt para armazenar senhas de forma segura. As senhas de teste são criptografadas durante a inicialização dos dados.
 
 ## 🐛 Resolução de Problemas
 

@@ -64,7 +64,7 @@ body {
   padding: 40px;
 }
 
-. page-title {
+.page-title {
   text-align: center;
   font-size: 32px;
   margin:  0 0 30px;
@@ -78,7 +78,7 @@ body {
   margin-bottom:  30px;
 }
 
-. tab-button {
+.tab-button {
   padding:  12px 24px;
   font-size: 16px;
   color: white;
@@ -151,18 +151,6 @@ body {
   gap: 15px;
   justify-content:  center;
   margin-top: 20px;
-}
-
-.tab-button{
-  padding: 12px 20px; /* Padding interno para botões */
-  background-color: #45A049; /* Verde padrão */
-  color: white;
-  border: none; /* Sem borda padrão */
-  border-radius: 5px; /* Arredondado */
-  cursor: pointer; /* Indica interatividade */
-  font-size: 16px; /* Tamanho do texto */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra leve */
-  transition: transform 0.2s, background-color 0.2s; /* Suavidade das ações */
 }
 
 .submit-button,
