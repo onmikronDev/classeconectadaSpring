@@ -2,7 +2,9 @@ package com.me.classeconectada.service;
 
 import com.me.classeconectada.model.Attendance;
 import com.me.classeconectada.model.AttendanceStatus;
+import com.me.classeconectada.model.Student;
 import com.me.classeconectada.repository.AttendanceRepository;
+import com.me.classeconectada.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
+    private final StudentRepository studentRepository;
     
     public List<Attendance> findAll() {
         return attendanceRepository.findAll();
@@ -50,9 +53,11 @@ public class AttendanceService {
             attendance.setStatus(status);
             return attendanceRepository.save(attendance);
         } else {
+            Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + studentId));
+            
             Attendance attendance = new Attendance();
-            attendance.setStudent(new com.me.classeconectada.model.Student());
-            attendance.getStudent().setId(studentId);
+            attendance.setStudent(student);
             attendance.setStatus(status);
             attendance.setDate(date);
             return attendanceRepository.save(attendance);
