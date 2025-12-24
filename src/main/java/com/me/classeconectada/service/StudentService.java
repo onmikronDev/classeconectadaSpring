@@ -3,6 +3,7 @@ package com.me.classeconectada.service;
 import com.me.classeconectada.model.Student;
 import com.me.classeconectada.repository.StudentRepository;
 import com.me.classeconectada.repository.UserRepository;
+import com.me.classeconectada.util.CpfValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,11 @@ public class StudentService {
     
     @Transactional
     public Student save(Student student) {
+        // Validate CPF format
+        if (student.getCpf() != null && !CpfValidator.isValid(student.getCpf())) {
+            throw new RuntimeException("CPF inválido");
+        }
+        
         // Validate unique email
         if (student.getEmail() != null && userRepository.findByEmail(student.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado");

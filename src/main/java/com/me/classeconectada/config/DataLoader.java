@@ -5,6 +5,7 @@ import com.me.classeconectada.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class DataLoader implements CommandLineRunner {
     private final DirectorRepository directorRepository;
     private final GradeRepository gradeRepository;
     private final ObservationRepository observationRepository;
+    private final PasswordEncoder passwordEncoder;
     
     @Override
     public void run(String... args) {
@@ -44,8 +46,7 @@ public class DataLoader implements CommandLineRunner {
     }
     
     private void initializeData() {
-        // SECURITY NOTE: Default passwords are plain text for demo/educational purposes only
-        // In a production environment, passwords should be hashed using BCrypt
+        // SECURITY NOTE: Passwords are now properly hashed using BCrypt
         
         // Create School Classes
         SchoolClass turmaA = createSchoolClass("Turma A");
@@ -58,7 +59,7 @@ public class DataLoader implements CommandLineRunner {
         Director admin = new Director();
         admin.setNome("Administrador");
         admin.setEmail("admin@email.com");
-        admin.setSenha("123456");
+        admin.setSenha(passwordEncoder.encode("123456"));
         admin.setCpf("000.000.000-00");
         admin.setTelefone("(11) 99999-9999");
         admin.setTipo(UserType.DIRETOR);
@@ -142,7 +143,7 @@ public class DataLoader implements CommandLineRunner {
         Teacher teacher = new Teacher();
         teacher.setNome(nome);
         teacher.setEmail(email);
-        teacher.setSenha(senha);
+        teacher.setSenha(passwordEncoder.encode(senha));
         teacher.setCpf(generateCpf());
         teacher.setTelefone("(11) 98765-4321");
         teacher.setTipo(UserType.PROFESSOR);
@@ -163,7 +164,7 @@ public class DataLoader implements CommandLineRunner {
         Student student = new Student();
         student.setNome(nome);
         student.setEmail(email);
-        student.setSenha("123456");
+        student.setSenha(passwordEncoder.encode("123456"));
         student.setCpf(cpf);
         student.setTelefone("(11) 91234-5678");
         student.setTipo(UserType.ALUNO);
