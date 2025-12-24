@@ -53,41 +53,59 @@ body {
 /* Conteúdo principal */
 .menu-container {
   margin: 32px auto;
-  width:  60%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #2E6264;
-  border-radius: 10px;
+  background-color: #346767;
+  border-radius: 12px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
   gap: 25px;
-  padding: 30px;
+  padding: 40px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Botões */
 .menu-button {
   width: 100%;
-  padding: 15px;
-  font-size:  18px;
-  color:  white;
-  background-color:  #254C50;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  background-color: #2E6264;
   border: none;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: all 0.3s ease;
 }
 
 .menu-button:hover {
-  background-color: #3C5C61;
-  transform: scale(1.05);
+  background-color: #254C50;
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.menu-button:active {
+  transform: translateY(0);
 }
 
 .menu-button .icon {
-  font-size: 20px;
+  font-size: 22px;
 }
 /* Modal */
 .modal {
@@ -135,6 +153,7 @@ body {
 
 .modal-content ul li:hover {
   background-color: #254C50; /* Fundo mais escuro no hover dos itens */
+  transform: translateX(5px);
 }
 
 /* Fechar Modal */
