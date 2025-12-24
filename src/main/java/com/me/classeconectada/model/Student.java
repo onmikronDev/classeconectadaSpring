@@ -21,8 +21,4 @@ public class Student extends User {
     @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<Grade> grades;
-    
-    @OneToMany(mappedBy = "student")
-    @JsonIgnore
-    private List<Observation> observations;
 }

@@ -23,7 +23,6 @@ public class DataLoader implements CommandLineRunner {
     private final TeacherRepository teacherRepository;
     private final DirectorRepository directorRepository;
     private final GradeRepository gradeRepository;
-    private final ObservationRepository observationRepository;
     
     @Override
     public void run(String... args) {
@@ -121,14 +120,6 @@ public class DataLoader implements CommandLineRunner {
         createGrade(julia, historia, 8.0, "Prova");
         
         log.info("Created {} grades", gradeRepository.count());
-        
-        // Create Observations
-        createObservation(alice, turmaA, "Aluna exemplar, sempre participativa nas aulas.");
-        createObservation(joao, turmaA, "Precisa melhorar a concentração durante as aulas.");
-        createObservation(maria, turmaA, "Excelente desempenho em todas as matérias.");
-        createObservation(pedro, turmaB, "Demonstra grande interesse por literatura.");
-        
-        log.info("Created {} observations", observationRepository.count());
     }
     
     private SchoolClass createSchoolClass(String name) {
@@ -182,15 +173,6 @@ public class DataLoader implements CommandLineRunner {
         grade.setDescription(description);
         grade.setExamDate(LocalDate.now());
         gradeRepository.save(grade);
-    }
-    
-    private void createObservation(Student student, SchoolClass turma, String content) {
-        Observation observation = new Observation();
-        observation.setStudent(student);
-        observation.setTurma(turma);
-        observation.setContent(content);
-        observation.setDate(LocalDate.now());
-        observationRepository.save(observation);
     }
     
     private String generateCpf() {
