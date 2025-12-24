@@ -23,7 +23,7 @@ public class DataLoader implements CommandLineRunner {
     private final TeacherRepository teacherRepository;
     private final DirectorRepository directorRepository;
     private final GradeRepository gradeRepository;
-    private final ObservationRepository observationRepository;
+    private final AttendanceRepository attendanceRepository;
     
     @Override
     public void run(String... args) {
@@ -122,13 +122,50 @@ public class DataLoader implements CommandLineRunner {
         
         log.info("Created {} grades", gradeRepository.count());
         
-        // Create Observations
-        createObservation(alice, turmaA, "Aluna exemplar, sempre participativa nas aulas.");
-        createObservation(joao, turmaA, "Precisa melhorar a concentração durante as aulas.");
-        createObservation(maria, turmaA, "Excelente desempenho em todas as matérias.");
-        createObservation(pedro, turmaB, "Demonstra grande interesse por literatura.");
+        // Create Attendances - Adding different attendance statuses for students
+        createAttendance(alice, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(alice, AttendanceStatus.PRESENT, LocalDate.now().minusDays(3));
+        createAttendance(alice, AttendanceStatus.PRESENT, LocalDate.now().minusDays(2));
+        createAttendance(alice, AttendanceStatus.ABSENT, LocalDate.now().minusDays(1));
+        createAttendance(alice, AttendanceStatus.PRESENT, LocalDate.now());
         
-        log.info("Created {} observations", observationRepository.count());
+        createAttendance(joao, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(joao, AttendanceStatus.ABSENT, LocalDate.now().minusDays(3));
+        createAttendance(joao, AttendanceStatus.JUSTIFIED, LocalDate.now().minusDays(2));
+        createAttendance(joao, AttendanceStatus.PRESENT, LocalDate.now().minusDays(1));
+        createAttendance(joao, AttendanceStatus.PRESENT, LocalDate.now());
+        
+        createAttendance(maria, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(maria, AttendanceStatus.PRESENT, LocalDate.now().minusDays(3));
+        createAttendance(maria, AttendanceStatus.PRESENT, LocalDate.now().minusDays(2));
+        createAttendance(maria, AttendanceStatus.PRESENT, LocalDate.now().minusDays(1));
+        createAttendance(maria, AttendanceStatus.PRESENT, LocalDate.now());
+        
+        createAttendance(pedro, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(pedro, AttendanceStatus.ABSENT, LocalDate.now().minusDays(3));
+        createAttendance(pedro, AttendanceStatus.ABSENT, LocalDate.now().minusDays(2));
+        createAttendance(pedro, AttendanceStatus.JUSTIFIED, LocalDate.now().minusDays(1));
+        createAttendance(pedro, AttendanceStatus.PRESENT, LocalDate.now());
+        
+        createAttendance(julia, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(julia, AttendanceStatus.PRESENT, LocalDate.now().minusDays(3));
+        createAttendance(julia, AttendanceStatus.JUSTIFIED, LocalDate.now().minusDays(2));
+        createAttendance(julia, AttendanceStatus.PRESENT, LocalDate.now().minusDays(1));
+        createAttendance(julia, AttendanceStatus.PRESENT, LocalDate.now());
+        
+        createAttendance(lucas, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(lucas, AttendanceStatus.PRESENT, LocalDate.now().minusDays(3));
+        createAttendance(lucas, AttendanceStatus.PRESENT, LocalDate.now().minusDays(2));
+        createAttendance(lucas, AttendanceStatus.PRESENT, LocalDate.now().minusDays(1));
+        createAttendance(lucas, AttendanceStatus.ABSENT, LocalDate.now());
+        
+        createAttendance(beatriz, AttendanceStatus.PRESENT, LocalDate.now().minusDays(4));
+        createAttendance(beatriz, AttendanceStatus.ABSENT, LocalDate.now().minusDays(3));
+        createAttendance(beatriz, AttendanceStatus.JUSTIFIED, LocalDate.now().minusDays(2));
+        createAttendance(beatriz, AttendanceStatus.JUSTIFIED, LocalDate.now().minusDays(1));
+        createAttendance(beatriz, AttendanceStatus.PRESENT, LocalDate.now());
+        
+        log.info("Created {} attendances", attendanceRepository.count());
     }
     
     private SchoolClass createSchoolClass(String name) {
@@ -184,13 +221,12 @@ public class DataLoader implements CommandLineRunner {
         gradeRepository.save(grade);
     }
     
-    private void createObservation(Student student, SchoolClass turma, String content) {
-        Observation observation = new Observation();
-        observation.setStudent(student);
-        observation.setTurma(turma);
-        observation.setContent(content);
-        observation.setDate(LocalDate.now());
-        observationRepository.save(observation);
+    private void createAttendance(Student student, AttendanceStatus status, LocalDate date) {
+        Attendance attendance = new Attendance();
+        attendance.setStudent(student);
+        attendance.setStatus(status);
+        attendance.setDate(date);
+        attendanceRepository.save(attendance);
     }
     
     private String generateCpf() {

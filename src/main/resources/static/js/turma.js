@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let turmas = [];
   let alunos = [];
   let subjects = [];
+  let attendances = {}; // Store today's attendances by student ID
 
   // Carregar turmas da API
   async function loadTurmas() {
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch(`http://localhost:8080/api/students/turma/${turma.id}`);
       if (response.ok) {
         alunos = await response.json();
+        await carregarPresencas();
         renderAlunos();
       } else {
         console.error("Erro ao carregar alunos");
@@ -86,6 +88,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Erro ao conectar com o servidor:", error);
       alunosList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor</li>";
+    }
+  }
+
+  // Load today's attendances for all students
+  async function carregarPresencas() {
+    attendances = {};
+    for (const aluno of alunos) {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`http://localhost:8080/api/attendances/student/${aluno.id}`);
+        if (response.ok) {
+          const studentAttendances = await response.json();
+          const todayAttendance = studentAttendances.find(att => att.date === today);
+          if (todayAttendance) {
+            attendances[aluno.id] = todayAttendance.status;
+          }
+        }
+      } catch (error) {
+        console.error(`Erro ao carregar presença do aluno ${aluno.id}:`, error);
+      }
     }
   }
 
@@ -98,10 +120,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     alunos.forEach((aluno) => {
       const li = document.createElement("li");
-      li.innerHTML = `<span>${aluno.nome}</span>`;
-      li.addEventListener("click", () => selecionarAluno(li, aluno));
+      
+      // Apply color based on attendance status
+      const status = attendances[aluno.id];
+      if (status === 'PRESENT') {
+        li.style.backgroundColor = '#58D68D'; // Green
+      } else if (status === 'ABSENT') {
+        li.style.backgroundColor = '#E74C3C'; // Red
+      } else if (status === 'JUSTIFIED') {
+        li.style.backgroundColor = '#F1C40F'; // Yellow
+      }
+      
+      li.innerHTML = `
+        <span>${aluno.nome}</span>
+        <div class="presence-options">
+          <button class="present" data-student-id="${aluno.id}" data-status="PRESENT">Presença</button>
+          <button class="absent" data-student-id="${aluno.id}" data-status="ABSENT">Falta</button>
+          <button class="justified" data-student-id="${aluno.id}" data-status="JUSTIFIED">Justificado</button>
+        </div>
+      `;
+      li.addEventListener("click", (e) => {
+        // Don't select if clicking buttons
+        if (!e.target.tagName || e.target.tagName !== 'BUTTON') {
+          selecionarAluno(li, aluno);
+        }
+      });
       alunosList.appendChild(li);
     });
+
+    // Add event listeners to attendance buttons
+    document.querySelectorAll('.presence-options button').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const studentId = e.target.getAttribute('data-student-id');
+        const status = e.target.getAttribute('data-status');
+        await marcarPresenca(studentId, status);
+      });
+    });
+  }
+
+  // Mark attendance for a student
+  async function marcarPresenca(studentId, status) {
+    try {
+      const response = await fetch(`http://localhost:8080/api/attendances/mark?studentId=${studentId}&status=${status}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        attendances[studentId] = status;
+        renderAlunos(); // Re-render to update colors
+        alert('Presença registrada com sucesso!');
+      } else {
+        alert('Erro ao registrar presença. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao marcar presença:', error);
+      alert('Erro ao conectar com o servidor.');
+    }
   }
 
   function selecionarTurma(li, turma) {
