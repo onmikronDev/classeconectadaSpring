@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       // Agrupar notas por matéria
       grades.forEach(grade => {
-        const materia = grade.subject?.nome || "Sem matéria";
+        const materia = grade.subject?.name || "Sem matéria";
         if (!notasPorMateria[materia]) {
           notasPorMateria[materia] = [];
         }
