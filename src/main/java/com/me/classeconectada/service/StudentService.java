@@ -2,6 +2,7 @@ package com.me.classeconectada.service;
 
 import com.me.classeconectada.model.Student;
 import com.me.classeconectada.repository.StudentRepository;
+import com.me.classeconectada.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final UserRepository userRepository;
     
     public List<Student> findAll() {
         return studentRepository.findAll();
@@ -32,6 +34,16 @@ public class StudentService {
     
     @Transactional
     public Student save(Student student) {
+        // Validate unique email
+        if (student.getEmail() != null && userRepository.findByEmail(student.getEmail()).isPresent()) {
+            throw new RuntimeException("Email já cadastrado");
+        }
+        
+        // Validate unique CPF
+        if (student.getCpf() != null && userRepository.findByCpf(student.getCpf()).isPresent()) {
+            throw new RuntimeException("CPF já cadastrado");
+        }
+        
         if (student.getActive() == null) {
             student.setActive(true);
         }

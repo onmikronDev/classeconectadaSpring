@@ -37,6 +37,16 @@ public class UserService {
     
     @Transactional
     public User save(User user) {
+        // Validate unique email
+        if (user.getEmail() != null && userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email já cadastrado");
+        }
+        
+        // Validate unique CPF
+        if (user.getCpf() != null && userRepository.findByCpf(user.getCpf()).isPresent()) {
+            throw new RuntimeException("CPF já cadastrado");
+        }
+        
         if (user.getActive() == null) {
             user.setActive(true);
         }
