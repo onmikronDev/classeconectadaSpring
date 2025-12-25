@@ -99,7 +99,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ✅ CORRIGIDO: Submissão integrada com API
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const activeTab = document.querySelector(".tab-button.active").getAttribute("data-tab");
+    
+    const activeTab = document.querySelector(".tab-button.active");
+    if (!activeTab) {
+      alert("Erro: Nenhuma aba selecionada");
+      return;
+    }
+    
+    const activeTabValue = activeTab.getAttribute("data-tab");
     const formData = new FormData(form);
 
     // Validação de CPF
@@ -111,7 +118,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Validação de email
     const email = formData.get("email");
-    if (!email.includes('@')) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
       alert("Email inválido!");
       return;
     }
@@ -120,22 +128,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userData = {
       nome: formData.get("nomeCompleto"),
       email: email,
-      senha: "123456", // Senha padrão
+      senha: formData.get("senha") || "123456", // Usar senha do form ou padrão
       cpf: cpf,
       telefone: formData.get("telefone"),
-      tipo: activeTab.toUpperCase(),
-      endereco: formData.get("endereco"),
-      pai: formData.get("pai"),
-      mae: formData.get("mae")
+      tipo: activeTabValue.toUpperCase(),
+      endereco: formData.get("endereco") || "",
+      pai: formData.get("pai") || "",
+      mae: formData.get("mae") || ""
     };
 
     // ✅ CORRIGIDO: Adicionar turmaId para aluno e professor
-    if (activeTab === "aluno") {
+    if (activeTabValue === "aluno") {
       const turmaId = formData.get("turmaAluno");
       if (turmaId) {
         userData.turmaId = parseInt(turmaId);
       }
-    } else if (activeTab === "professor") {
+    } else if (activeTabValue === "professor") {
       const turmaId = formData.get("turma");
       if (turmaId) {
         userData.turmaId = parseInt(turmaId);
@@ -152,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (response.ok) {
         const savedUser = await response.json();
-        alert(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} cadastrado com sucesso!`);
+        alert(`${activeTabValue.charAt(0).toUpperCase() + activeTabValue.slice(1)} cadastrado com sucesso!`);
         form.reset();
         // Resetar para aba professor
         tabButtons[0].click();
