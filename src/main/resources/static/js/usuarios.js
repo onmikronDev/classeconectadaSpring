@@ -125,6 +125,9 @@ function openEditModal(id) {
   editModal.style.display = "flex";
 }
 
+// Expor função globalmente para uso em onclick
+window.openEditModal = openEditModal;
+
 // Preencher dropdown de turmas
 function preencherDropdownTurmas() {
   const select = document.getElementById("editTurma");
@@ -227,6 +230,9 @@ async function deleteUser(id) {
     alert('Erro ao conectar com o servidor.');
   }
 }
+
+// Expor função globalmente para uso em onclick
+window.deleteUser = deleteUser;
 
 // Event Listeners
 filterTipo.addEventListener("change", filterUsers);
