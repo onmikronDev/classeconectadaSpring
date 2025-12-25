@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classe Conectada - Bem-vindo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 1rem 3rem;
+      font-size: 1.2rem;
+      color: white;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: white;
+      color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .info {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      max-width: 600px;
+    }
+
+    .info h3 {
+      margin-bottom: 1rem;
+    }
+
+    .info ul {
+      list-style: none;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 400px;
+    }
+
+    .info li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .info li:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 Classe Conectada</h1>
+    <p>Sistema de Gestão Escolar</p>
+    <a href="html/Login.html" class="button">Fazer Login</a>
+    
+    <div class="info">
+      <h3>Credenciais de Teste</h3>
+      <ul>
+        <li><strong>Email:</strong> admin@email.com</li>
+        <li><strong>Senha:</strong> 123456</li>
+      </ul>
+      <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+        Ou use qualquer dos usuários cadastrados (alice@email.com, joao@email.com, etc.) com a senha padrão: 123456
+      </p>
+    </div>
+  </div>
+
+  <footer style="position: absolute; bottom: 20px; text-align: center;">
+    <p>&copy; 2025 Classe Conectada. Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
