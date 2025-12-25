@@ -180,6 +180,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  document.getElementById("historicoBtn").addEventListener("click", () => {
+    if (alunoSelecionado) {
+      window.location.href = `historico.html?studentId=${alunoSelecionado.data.id}`;
+    } else {
+      alert("Selecione um aluno antes de visualizar o histórico.");
+    }
+  });
+
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "index.html";
   });

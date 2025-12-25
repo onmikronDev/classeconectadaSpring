@@ -1,17 +1,34 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const materiasList = document.getElementById("materiasList");
   const notasList = document.getElementById("notasList");
+  const historicoTitle = document.getElementById("historicoTitle");
 
-  // Obter dados do usuário logado do localStorage
-  const userStr = localStorage.getItem("user");
-  if (!userStr) {
-    alert("Usuário não autenticado. Redirecionando para login.");
-    window.location.href = "Login.html";
+  // Obter studentId da URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const studentId = urlParams.get("studentId");
+
+  if (!studentId) {
+    alert("Nenhum aluno selecionado. Redirecionando para turmas.");
+    window.location.href = "turma.html";
     return;
   }
 
-  const user = JSON.parse(userStr);
-  const studentId = user.id;
+  // Buscar dados do aluno
+  let studentName = "Aluno";
+  try {
+    const studentResponse = await fetch(`http://localhost:8080/api/students/${studentId}`);
+    if (studentResponse.ok) {
+      const student = await studentResponse.json();
+      studentName = student.nome;
+      historicoTitle.textContent = `Histórico de ${studentName}`;
+    } else {
+      console.error("Erro ao carregar dados do aluno");
+      historicoTitle.textContent = `Histórico do Aluno`;
+    }
+  } catch (error) {
+    console.error("Erro ao conectar com o servidor:", error);
+    historicoTitle.textContent = `Histórico do Aluno`;
+  }
 
   // Buscar notas do aluno da API
   let notasPorMateria = {};
