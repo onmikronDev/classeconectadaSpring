@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const turmaList = document.getElementById("turmaList");
   const alunosList = document.getElementById("alunosList");
 
@@ -17,41 +17,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   let alunos = [];
   let subjects = [];
 
-  // Carregar turmas da API
-  async function loadTurmas() {
-    try {
-      const response = await fetch("../api/classes.php");
-      if (response.ok) {
-        turmas = await response.json();
-        renderTurmas();
-      } else {
-        console.error("Erro ao carregar turmas");
-        turmaList.innerHTML = "<li style='color: red;'>Erro ao carregar turmas do servidor</li>";
-      }
-    } catch (error) {
-      console.error("Erro ao conectar com o servidor:", error);
-      turmaList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor. Verifique se o PHP está rodando.</li>";
-    }
+  // Carregar turmas do localStorage
+  function loadTurmas() {
+    turmas = dataManager.getTurmas();
+    renderTurmas();
   }
 
-  // Carregar matérias da API
-  async function loadSubjects() {
-    try {
-      const response = await fetch("../api/subjects.php");
-      if (response.ok) {
-        subjects = await response.json();
-        // Atualizar o select de matérias
-        materiaNotaInput.innerHTML = '<option value="" disabled selected>Selecione uma matéria</option>';
-        subjects.forEach(subject => {
-          const option = document.createElement("option");
-          option.value = subject.id;
-          option.textContent = subject.nome;
-          materiaNotaInput.appendChild(option);
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao carregar matérias:", error);
-    }
+  // Carregar matérias do localStorage
+  function loadSubjects() {
+    subjects = dataManager.getMaterias();
+    // Atualizar o select de matérias
+    materiaNotaInput.innerHTML = '<option value="" disabled selected>Selecione uma matéria</option>';
+    subjects.forEach(subject => {
+      const option = document.createElement("option");
+      option.value = subject.id;
+      option.textContent = subject.nome;
+      materiaNotaInput.appendChild(option);
+    });
   }
 
   // Renderizar lista de turmas
@@ -73,20 +55,9 @@ document.addEventListener("DOMContentLoaded", async () => {
    * Preenche a lista de alunos de acordo com a turma selecionada
    * @param {Object} turma Turma selecionada
    */
-  async function carregarAlunos(turma) {
-    try {
-      const response = await fetch(`../api/students.php?turma=${turma.id}`);
-      if (response.ok) {
-        alunos = await response.json();
-        renderAlunos();
-      } else {
-        console.error("Erro ao carregar alunos");
-        alunosList.innerHTML = "<li style='color: red;'>Erro ao carregar alunos</li>";
-      }
-    } catch (error) {
-      console.error("Erro ao conectar com o servidor:", error);
-      alunosList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor</li>";
-    }
+  function carregarAlunos(turma) {
+    alunos = dataManager.getAlunosPorTurma(turma.id);
+    renderAlunos();
   }
 
   // Renderizar lista de alunos
@@ -133,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     notaModal.style.display = "none";
   });
 
-  notaForm.addEventListener("submit", async (e) => {
+  notaForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const subjectId = materiaNotaInput.value;
     const descricao = descricaoNotaInput.value;
@@ -149,35 +120,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Preparar dados para enviar à API
-    const gradeData = {
-      student: { id: alunoSelecionado.data.id },
-      subject: { id: parseInt(subjectId) },
+    // Salvar nota no localStorage
+    const novaNota = {
+      student_id: alunoSelecionado.data.id,
+      subject_id: parseInt(subjectId),
       value: parseFloat(nota),
       description: descricao,
       examDate: new Date().toISOString().split('T')[0]
     };
 
-    try {
-      const response = await fetch("../api/grades.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(gradeData),
-      });
-
-      if (response.ok) {
-        alert("Nota aplicada com sucesso!");
-        notaModal.style.display = "none";
-        notaForm.reset();
-      } else {
-        alert("Erro ao aplicar nota. Verifique os dados e tente novamente.");
-      }
-    } catch (error) {
-      console.error("Erro ao aplicar nota:", error);
-      alert("Erro ao conectar com o servidor.");
-    }
+    dataManager.adicionarNota(novaNota);
+    
+    alert("Nota aplicada com sucesso!");
+    notaModal.style.display = "none";
+    notaForm.reset();
   });
 
   document.getElementById("voltarBtn").addEventListener("click", () => {
@@ -185,6 +141,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Inicializar
-  await loadTurmas();
-  await loadSubjects();
+  loadTurmas();
+  loadSubjects();
 });

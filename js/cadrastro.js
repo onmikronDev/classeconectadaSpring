@@ -53,32 +53,20 @@ document.addEventListener("DOMContentLoaded", () => {
       cpf: data.cpf,
       telefone: data.telefone,
       senha: data.senha,
-      tipo: tipo,
-      active: true
+      tipo: tipo.toUpperCase(),
+      ativo: 1
     };
 
-    try {
-      const response = await fetch("../api/users.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (response.ok) {
-        const savedUser = await response.json();
-        console.log(`${activeTab} cadastrado:`, savedUser);
-        alert(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} cadastrado com sucesso!`);
-        form.reset();
-      } else {
-        const error = await response.text();
-        console.error("Erro ao cadastrar:", error);
-        alert("Erro ao cadastrar usuário. Verifique os dados e tente novamente.");
-      }
-    } catch (error) {
-      console.error("Erro ao conectar com o servidor:", error);
-      alert("Erro ao conectar com o servidor. Verifique se o backend está rodando.");
-    }
+    // Adicionar novo usuário ao localStorage
+    const usuarios = dataManager.getUsuarios();
+    const newId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+    const novoUsuario = { id: newId, ...userData };
+    
+    usuarios.push(novoUsuario);
+    dataManager.setUsuarios(usuarios);
+    
+    console.log(`${activeTab} cadastrado:`, novoUsuario);
+    alert(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} cadastrado com sucesso!`);
+    form.reset();
   });
 });

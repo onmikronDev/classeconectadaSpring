@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Submissão do formulário
-  loginForm.addEventListener("submit", async (e) => {
+  loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -25,36 +25,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    try {
-      // Chamada à API PHP local
-      const response = await fetch("../api/auth/login.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, senha }),
-      });
+    // Usuários mockados (dados de exemplo)
+    const usuarios = [
+      { id: 1, nome: "Administrador", email: "admin@email.com", senha: "123456", tipo: "DIRETOR" },
+      { id: 2, nome: "João Silva", email: "joao@email.com", senha: "123456", tipo: "PROFESSOR" },
+      { id: 3, nome: "Ana Santos", email: "ana@email.com", senha: "123456", tipo: "PROFESSOR" },
+      { id: 4, nome: "Carlos Pereira", email: "carlos@email.com", senha: "123456", tipo: "PROFESSOR" },
+      { id: 5, nome: "Alice Oliveira", email: "alice@email.com", senha: "123456", tipo: "ALUNO" },
+      { id: 6, nome: "João Aluno", email: "joao.aluno@email.com", senha: "123456", tipo: "ALUNO" },
+      { id: 7, nome: "Maria Costa", email: "maria@email.com", senha: "123456", tipo: "ALUNO" },
+      { id: 8, nome: "Pedro Souza", email: "pedro@email.com", senha: "123456", tipo: "ALUNO" }
+    ];
 
-      const data = await response.json();
+    // Verificar credenciais
+    const user = usuarios.find(u => u.email === email && u.senha === senha);
 
-      if (response.ok && data.success) {
-        // Salvar dados do usuário no localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-        
-        if (lembrarMe) {
-          localStorage.setItem("lembrarMe", "true");
-          localStorage.setItem("email", email);
-        }
-
-        // Sucesso - redireciona
-        alert("Login realizado com sucesso!");
-        window.location.href = "../html/index.html";
-      } else {
-        showError(data.message || "Email ou senha incorretos.");
+    if (user) {
+      // Salvar dados do usuário no localStorage
+      localStorage.setItem("user", JSON.stringify(user));
+      
+      if (lembrarMe) {
+        localStorage.setItem("lembrarMe", "true");
+        localStorage.setItem("email", email);
       }
-    } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      showError("Erro ao conectar com o servidor. Verifique se o PHP e MySQL estão rodando.");
+
+      // Sucesso - redireciona
+      alert("Login realizado com sucesso!");
+      window.location.href = "../html/index.html";
+    } else {
+      showError("Email ou senha incorretos.");
     }
   });
 

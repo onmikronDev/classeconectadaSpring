@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const relatorioBtn = document.getElementById("relatorioBtn");
   const relatorioModal = document.getElementById("relatorioModal");
   const closeRelatorioModal = document.getElementById("closeRelatorioModal");
@@ -13,32 +13,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   let alunosPorTurma = {};
   let notasPorAluno = {};
 
-  // Carregar dados da API
-  async function loadData() {
-    try {
-      // Carregar turmas
-      const turmasResponse = await fetch("../api/classes.php");
-      if (turmasResponse.ok) {
-        turmas = await turmasResponse.json();
-      }
-    } catch (error) {
-      console.error("Erro ao carregar dados:", error);
-    }
+  // Carregar dados do localStorage
+  function loadData() {
+    turmas = dataManager.getTurmas();
   }
 
-  relatorioBtn.addEventListener("click", async () => {
+  relatorioBtn.addEventListener("click", () => {
     relatorioModal.style.display = "flex";
     alunosContainer.style.display = "none";
     materiasContainer.style.display = "none";
     turmasContainer.style.display = "block";
-    await preencherTurmas();
+    preencherTurmas();
   });
 
   closeRelatorioModal.addEventListener("click", () => {
     relatorioModal.style.display = "none";
   });
 
-  async function preencherTurmas() {
+  function preencherTurmas() {
     turmasList.innerHTML = "";
     if (turmas.length === 0) {
       turmasList.innerHTML = "<li>Nenhuma turma encontrada</li>";
@@ -52,71 +44,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  async function exibirAlunos(turma) {
+  function exibirAlunos(turma) {
     materiasContainer.style.display = "none";
     alunosContainer.style.display = "block";
     turmasContainer.style.display = "none";
     alunosList.innerHTML = "";
     
-    try {
-      // Carregar alunos da turma
-      const response = await fetch(`../api/students.php?turma=${turma.id}`);
-      if (response.ok) {
-        const alunos = await response.json();
-        if (alunos.length === 0) {
-          alunosList.innerHTML = "<li>Nenhum aluno encontrado nesta turma</li>";
-          return;
-        }
-        alunos.forEach((aluno) => {
-          const li = document.createElement("li");
-          li.textContent = aluno.nome;
-          li.addEventListener("click", () => exibirMaterias(aluno));
-          alunosList.appendChild(li);
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao carregar alunos:", error);
-      alunosList.innerHTML = "<li style='color: red;'>Erro ao carregar alunos</li>";
+    // Carregar alunos da turma do localStorage
+    const alunos = dataManager.getAlunosPorTurma(turma.id);
+    
+    if (alunos.length === 0) {
+      alunosList.innerHTML = "<li>Nenhum aluno encontrado nesta turma</li>";
+      return;
     }
+    
+    alunos.forEach((aluno) => {
+      const li = document.createElement("li");
+      li.textContent = aluno.nome;
+      li.addEventListener("click", () => exibirMaterias(aluno));
+      alunosList.appendChild(li);
+    });
   }
 
-  async function exibirMaterias(aluno) {
+  function exibirMaterias(aluno) {
     materiasContainer.style.display = "block";
     alunosContainer.style.display = "none";
     materiasList.innerHTML = "";
     
-    try {
-      // Carregar notas do aluno
-      const response = await fetch(`../api/grades.php?student=${aluno.id}`);
-      if (response.ok) {
-        const grades = await response.json();
-        
-        if (grades.length === 0) {
-          materiasList.innerHTML = "<li>Nenhuma nota encontrada para este aluno</li>";
-          return;
-        }
-        
-        // Agrupar notas por matéria e calcular média
-        const notasPorMateria = {};
-        grades.forEach(grade => {
-          const materia = grade.subject?.nome || "Sem matéria";
-          if (!notasPorMateria[materia]) {
-            notasPorMateria[materia] = [];
-          }
-          notasPorMateria[materia].push(grade.value);
-        });
-        
-        Object.entries(notasPorMateria).forEach(([materia, notas]) => {
-          const media = calcularMedia(notas);
-          const li = document.createElement("li");
-          li.textContent = `${materia}: Média ${media}`;
-          materiasList.appendChild(li);
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao carregar notas:", error);
-      materiasList.innerHTML = "<li style='color: red;'>Erro ao carregar notas</li>";
+    // Carregar notas do aluno do localStorage
+    const grades = dataManager.getNotasPorAluno(aluno.id);
+    
+    if (grades.length === 0) {
+      materiasList.innerHTML = "<li>Nenhuma nota encontrada para este aluno</li>";
+      return;
     }
+    
+    // Agrupar notas por matéria e calcular média
+    const notasPorMateria = {};
+    grades.forEach(grade => {
+      const materia = grade.subject?.nome || "Sem matéria";
+      if (!notasPorMateria[materia]) {
+        notasPorMateria[materia] = [];
+      }
+      notasPorMateria[materia].push(grade.value);
+    });
+    
+    Object.entries(notasPorMateria).forEach(([materia, notas]) => {
+      const media = calcularMedia(notas);
+      const li = document.createElement("li");
+      li.textContent = `${materia}: Média ${media}`;
+      materiasList.appendChild(li);
+    });
   }
 
   function calcularMedia(notas) {
@@ -125,5 +103,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Inicializar
-  await loadData();
+  loadData();
 });

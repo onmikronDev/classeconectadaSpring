@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const materiasList = document.getElementById("materiasList");
   const notasList = document.getElementById("notasList");
 
@@ -13,34 +13,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const user = JSON.parse(userStr);
   const studentId = user.id;
 
-  // Buscar notas do aluno da API
+  // Buscar notas do aluno do localStorage
   let notasPorMateria = {};
 
-  try {
-    const response = await fetch(`../api/grades.php?student=${studentId}`);
-    if (response.ok) {
-      const grades = await response.json();
-      
-      // Agrupar notas por matéria
-      grades.forEach(grade => {
-        const materia = grade.subject?.nome || "Sem matéria";
-        if (!notasPorMateria[materia]) {
-          notasPorMateria[materia] = [];
-        }
-        notasPorMateria[materia].push({
-          valor: grade.value,
-          descricao: grade.description,
-          data: grade.examDate
-        });
-      });
-    } else {
-      console.error("Erro ao carregar notas");
-      notasList.innerHTML = "<li style='color: red;'>Erro ao carregar notas do servidor</li>";
+  const grades = dataManager.getNotasPorAluno(studentId);
+  
+  // Agrupar notas por matéria
+  grades.forEach(grade => {
+    const materia = grade.subject?.nome || "Sem matéria";
+    if (!notasPorMateria[materia]) {
+      notasPorMateria[materia] = [];
     }
-  } catch (error) {
-    console.error("Erro ao conectar com o servidor:", error);
-    notasList.innerHTML = "<li style='color: red;'>Erro ao conectar com o servidor. Verifique se o backend está rodando.</li>";
-  }
+    notasPorMateria[materia].push({
+      valor: grade.value,
+      descricao: grade.description,
+      data: grade.examDate
+    });
+  });
 
   // Preencher lista de matérias
   Object.keys(notasPorMateria).forEach((materia) => {

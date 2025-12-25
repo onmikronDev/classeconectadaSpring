@@ -1,7 +1,4 @@
-// API Base URL
-const API_URL = "../api/users.php";
-
-// Dados de usuários (serão carregados da API)
+// Dados de usuários (carregados do localStorage)
 let usuarios = [];
 
 let currentEditId = null;
@@ -18,26 +15,10 @@ const editTipo = document.getElementById("editTipo");
 const editTurmaGroup = document.getElementById("editTurmaGroup");
 const editMateriaGroup = document.getElementById("editMateriaGroup");
 
-// Carregar usuários da API
-async function loadUsers() {
-  try {
-    const response = await fetch(API_URL);
-    if (response.ok) {
-      usuarios = await response.json();
-      // Mapear tipo para lowercase para compatibilidade com o frontend
-      usuarios = usuarios.map(user => ({
-        ...user,
-        tipo: user.tipo.toLowerCase()
-      }));
-      renderTable();
-    } else {
-      console.error("Erro ao carregar usuários");
-      tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar usuários do servidor</td></tr>`;
-    }
-  } catch (error) {
-    console.error("Erro ao conectar com o servidor:", error);
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao conectar com o servidor. Verifique se o backend está rodando.</td></tr>`;
-  }
+// Carregar usuários do localStorage
+function loadUsers() {
+  usuarios = dataManager.getUsuarios();
+  renderTable();
 }
 
 // Renderizar tabela
@@ -130,47 +111,27 @@ editForm.addEventListener("submit", async (e) => {
       materia: document.getElementById("editMateria").value
     };
 
-    try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedUser),
-      });
-
-      if (response.ok) {
-        await loadUsers();
-        closeModal();
-        alert("Usuário atualizado com sucesso!");
-      } else {
-        alert("Erro ao atualizar usuário.");
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      alert("Erro ao conectar com o servidor.");
+    // Atualizar no localStorage
+    const allUsuarios = dataManager.getUsuarios();
+    const index = allUsuarios.findIndex(u => u.id === id);
+    if (index !== -1) {
+      allUsuarios[index] = updatedUser;
+      dataManager.setUsuarios(allUsuarios);
+      loadUsers();
+      closeModal();
+      alert("Usuário atualizado com sucesso!");
     }
   }
 });
 
 // Excluir usuário
-async function deleteUser(id) {
+function deleteUser(id) {
   if (confirm("Tem certeza que deseja excluir este usuário?")) {
-    try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok || response.status === 204) {
-        await loadUsers();
-        alert("Usuário excluído com sucesso!");
-      } else {
-        alert("Erro ao excluir usuário.");
-      }
-    } catch (error) {
-      console.error("Erro ao excluir usuário:", error);
-      alert("Erro ao conectar com o servidor.");
-    }
+    const allUsuarios = dataManager.getUsuarios();
+    const novasUsuarios = allUsuarios.filter(u => u.id !== id);
+    dataManager.setUsuarios(novasUsuarios);
+    loadUsers();
+    alert("Usuário excluído com sucesso!");
   }
 }
 
