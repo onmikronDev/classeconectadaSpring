@@ -1,6 +1,6 @@
-# ClasseConectada - Sistema Educacional
+# ClasseConectada - Sistema Educacional (Frontend Puro)
 
-Sistema completo de gestão escolar com Spring Boot + HTML/CSS/JS
+Sistema completo de gestão escolar com HTML, CSS e JavaScript puro (sem backend).
 
 ## 📋 Descrição
 
@@ -15,279 +15,219 @@ ClasseConectada é um sistema educacional moderno que permite gerenciar:
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:**
-  - Spring Boot 4.0.1
-  - Spring Data JPA
-  - Spring Web
-  - Spring Validation
-  - MySQL 8.x
-  - Lombok
-  - Maven
-
 - **Frontend:**
   - HTML5
   - CSS3
   - JavaScript (Vanilla)
-
-## 📦 Pré-requisitos
-
-- Java 17 ou superior
-- Maven 3.6+
-- MySQL 8.0+ (rodando em localhost:3306)
-- Usuário MySQL: `root` / Senha: `root` (ou configure no application.properties)
+  - LocalStorage para persistência de dados
 
 ## 🚀 Como Executar
 
-### 1. Clone o repositório
+### Opção 1: Abrir diretamente no navegador
+1. Clone o repositório:
 ```bash
 git clone https://github.com/onmikronDev/classeconectadaSpring.git
 cd classeconectadaSpring
 ```
 
-### 2. Configure o MySQL
-Certifique-se de que o MySQL está rodando e que as credenciais estão corretas em `src/main/resources/application.properties`:
-```properties
-spring.datasource.username=root
-spring.datasource.password=root
-```
+2. Abra o arquivo `index.html` no seu navegador preferido
+   - Ou navegue diretamente para `html/Login.html`
 
-### 3. Execute a aplicação
+### Opção 2: Usar um servidor HTTP local (Recomendado)
+
+**Com Python 3:**
 ```bash
-./mvnw spring-boot:run
+python -m http.server 8000
 ```
-Ou no Windows:
+
+**Com Python 2:**
 ```bash
-mvnw.cmd spring-boot:run
+python -m SimpleHTTPServer 8000
 ```
 
-### 4. Acesse a aplicação
-- Frontend: http://localhost:8080/html/Login.html
-- API Base URL: http://localhost:8080/api
+**Com Node.js (usando npx):**
+```bash
+npx http-server -p 8000
+```
 
-### 5. Login Padrão
+**Com PHP:**
+```bash
+php -S localhost:8000
+```
+
+Depois acesse: http://localhost:8000
+
+### 3. Faça Login
+
+**Credenciais padrão:**
 - **Email:** admin@email.com
 - **Senha:** 123456
+
+**Outros usuários disponíveis:**
+- alice@email.com / 123456 (Aluna - Turma A)
+- bruno@email.com / 123456 (Aluno - Turma A)
+- carolina@email.com / 123456 (Aluna - Turma A)
+- daniel@email.com / 123456 (Aluno - Turma B)
+- eduarda@email.com / 123456 (Aluna - Turma B)
+- felipe@email.com / 123456 (Aluno - Turma C)
+- gabriela@email.com / 123456 (Aluna - Turma C)
+- joao@email.com / 123456 (Professor - Turma A)
+- ana@email.com / 123456 (Professora - Turma B)
+- carlos@email.com / 123456 (Professor - Turma C)
 
 ## 📚 Estrutura do Projeto
 
 ```
-src/main/java/com/me/classeconectada/
-├── ClasseConectadaApplication.java  # Classe principal
-├── config/
-│   └── DataLoader.java              # Carrega dados iniciais
-├── model/                           # Entidades JPA
-│   ├── User.java                    # Classe base de usuário
-│   ├── Student.java                 # Aluno (extends User)
-│   ├── Teacher.java                 # Professor (extends User)
-│   ├── Director.java                # Diretor (extends User)
-│   ├── SchoolClass.java             # Turma
-│   ├── Subject.java                 # Matéria
-│   ├── Grade.java                   # Nota
-│   ├── Observation.java             # Observação
-│   └── UserType.java                # Enum de tipos de usuário
-├── repository/                      # Repositórios JPA
-├── service/                         # Serviços (lógica de negócio)
-├── controller/                      # Controllers REST
-└── dto/                            # Data Transfer Objects
-
-src/main/resources/
-├── application.properties           # Configurações
-└── static/                         # Frontend (HTML/CSS/JS)
-    ├── html/
-    ├── css/
-    ├── js/
-    └── img/
+classeconectadaSpring/
+├── index.html                 # Página inicial de boas-vindas
+├── html/                      # Páginas HTML
+│   ├── Login.html            # Tela de login
+│   ├── index.html            # Dashboard principal
+│   ├── turma.html            # Gestão de turmas e alunos
+│   ├── historico.html        # Histórico de notas do aluno
+│   ├── cadrastro.html        # Cadastro de usuários
+│   ├── usuarios.html         # Gerenciamento de usuários
+│   └── observacoes.html      # Observações sobre alunos
+├── css/                      # Arquivos de estilo
+│   ├── login.css
+│   ├── index.css
+│   ├── turma.css
+│   ├── historico.css
+│   ├── cadrastro.css
+│   └── usuarios.css
+├── js/                       # Scripts JavaScript
+│   ├── mockData.js           # Dados mock e persistência
+│   ├── login.js              # Lógica de login
+│   ├── index.js              # Dashboard e relatórios
+│   ├── turma.js              # Gestão de turmas
+│   ├── historico.js          # Histórico de notas
+│   ├── cadrastro.js          # Cadastro de usuários
+│   ├── usuarios.js           # Gerenciamento de usuários
+│   └── observacoes.js        # Observações
+└── img/                      # Imagens e logos
+    └── classe-conectada-*.svg
 ```
-
-## 🌐 Endpoints da API
-
-### Autenticação
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/api/auth/login` | Login de usuário |
-
-**Exemplo de requisição:**
-```json
-{
-  "email": "admin@email.com",
-  "senha": "123456"
-}
-```
-
-### Usuários
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/users` | Listar todos os usuários ativos |
-| GET | `/api/users/{id}` | Buscar usuário por ID |
-| GET | `/api/users/tipo/{tipo}` | Filtrar por tipo (PROFESSOR, ALUNO, DIRETOR) |
-| POST | `/api/users` | Criar novo usuário |
-| PUT | `/api/users/{id}` | Atualizar usuário |
-| DELETE | `/api/users/{id}` | Desativar usuário (soft delete) |
-
-### Alunos
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/students` | Listar todos os alunos ativos |
-| GET | `/api/students/{id}` | Buscar aluno por ID |
-| GET | `/api/students/turma/{turmaId}` | Listar alunos de uma turma |
-| POST | `/api/students` | Criar novo aluno |
-| PUT | `/api/students/{id}` | Atualizar aluno |
-| DELETE | `/api/students/{id}` | Desativar aluno |
-
-### Professores
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/teachers` | Listar todos os professores ativos |
-| GET | `/api/teachers/{id}` | Buscar professor por ID |
-| GET | `/api/teachers/turma/{turmaId}` | Listar professores de uma turma |
-| POST | `/api/teachers` | Criar novo professor |
-| PUT | `/api/teachers/{id}` | Atualizar professor |
-| DELETE | `/api/teachers/{id}` | Desativar professor |
-
-### Diretores
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/directors` | Listar todos os diretores ativos |
-| GET | `/api/directors/{id}` | Buscar diretor por ID |
-| POST | `/api/directors` | Criar novo diretor |
-| PUT | `/api/directors/{id}` | Atualizar diretor |
-| DELETE | `/api/directors/{id}` | Desativar diretor |
-
-### Turmas
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/classes` | Listar todas as turmas ativas |
-| GET | `/api/classes/{id}` | Buscar turma por ID |
-| GET | `/api/classes/{id}/students` | Listar alunos de uma turma |
-| POST | `/api/classes` | Criar nova turma |
-| PUT | `/api/classes/{id}` | Atualizar turma |
-| DELETE | `/api/classes/{id}` | Desativar turma |
-
-### Matérias
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/subjects` | Listar todas as matérias ativas |
-| GET | `/api/subjects/{id}` | Buscar matéria por ID |
-| GET | `/api/subjects/teacher/{teacherId}` | Listar matérias de um professor |
-| POST | `/api/subjects` | Criar nova matéria |
-| PUT | `/api/subjects/{id}` | Atualizar matéria |
-| DELETE | `/api/subjects/{id}` | Desativar matéria |
-
-### Notas
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/grades` | Listar todas as notas |
-| GET | `/api/grades/{id}` | Buscar nota por ID |
-| GET | `/api/grades/student/{studentId}` | Listar notas de um aluno |
-| GET | `/api/grades/student/{studentId}/subject/{subjectId}` | Notas de um aluno em uma matéria |
-| GET | `/api/grades/subject/{subjectId}` | Listar notas de uma matéria |
-| POST | `/api/grades` | Aplicar nova nota |
-| PUT | `/api/grades/{id}` | Atualizar nota |
-| DELETE | `/api/grades/{id}` | Deletar nota |
-
-**Exemplo de requisição para criar nota:**
-```json
-{
-  "student": {
-    "id": 1
-  },
-  "subject": {
-    "id": 1
-  },
-  "value": 8.5,
-  "description": "Prova Bimestral",
-  "examDate": "2024-12-23"
-}
-```
-
-### Observações
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/observations` | Listar todas as observações |
-| GET | `/api/observations/{id}` | Buscar observação por ID |
-| GET | `/api/observations/student/{studentId}` | Observações de um aluno |
-| GET | `/api/observations/turma/{turmaId}` | Observações de uma turma |
-| POST | `/api/observations` | Criar nova observação |
-| PUT | `/api/observations/{id}` | Atualizar observação |
-| DELETE | `/api/observations/{id}` | Deletar observação |
 
 ## 🎯 Funcionalidades
 
 ### Telas do Sistema
+- **Página Inicial** (index.html) - Boas-vindas e acesso ao login
 - **Login** (Login.html) - Autenticação de usuários
-- **Dashboard** (index.html) - Menu principal
-- **Turmas** (turma.html) - Gestão de turmas e alunos
-- **Cadastro** (cadrastro.html) - Cadastro de usuários
-- **Usuários** (usuarios.html) - Gerenciamento de usuários
-- **Histórico** (historico.html) - Notas e histórico do aluno
-- **Observações** (observacoes.html) - Observações sobre alunos
+- **Dashboard** (html/index.html) - Menu principal com relatórios
+- **Turmas** (turma.html) - Listagem de turmas, alunos e aplicação de notas
+- **Cadastro** (cadrastro.html) - Cadastro de professores, alunos e diretores
+- **Usuários** (usuarios.html) - Gerenciamento e edição de usuários
+- **Histórico** (historico.html) - Visualização de notas por aluno (requer seleção prévia)
+- **Observações** (observacoes.html) - Observações sobre os alunos
 
-### Recursos do Backend
-- ✅ API REST completa com CRUD
-- ✅ Validação de dados com Bean Validation
-- ✅ Herança de entidades (User → Student, Teacher, Director)
-- ✅ Relacionamentos JPA (OneToMany, ManyToOne)
-- ✅ Soft Delete (campo active)
-- ✅ CORS habilitado para frontend
-- ✅ Dados iniciais automáticos
-- ✅ Validação de notas (0-10)
+### Recursos Implementados
+- ✅ Sistema de login com autenticação
+- ✅ Persistência de dados com LocalStorage
+- ✅ CRUD completo de usuários (Criar, Ler, Atualizar, Desativar)
+- ✅ Gestão de turmas e alunos
+- ✅ Aplicação e visualização de notas
+- ✅ Cálculo automático de médias
+- ✅ Histórico de notas por aluno
+- ✅ Sistema de observações
+- ✅ Filtros e busca de usuários
+- ✅ Validação de CPF
+- ✅ Interface responsiva
 
-## 🔧 Configurações Avançadas
-
-### Alterar Porta do Servidor
-Edite `application.properties`:
-```properties
-server.port=8081
-```
-
-### Alterar Modo de Criação do Schema
-```properties
-spring.jpa.hibernate.ddl-auto=create  # Recria o schema a cada execução
-spring.jpa.hibernate.ddl-auto=update  # Atualiza o schema (padrão)
-spring.jpa.hibernate.ddl-auto=none    # Não altera o schema
-```
+### Regras de Negócio
+- **Histórico**: Só é possível acessar o histórico se um aluno for selecionado primeiro na tela de Turmas
+- **Notas**: Valores entre 0 e 10
+- **Soft Delete**: Usuários são desativados, não deletados permanentemente
+- **Senha Padrão**: Novos usuários cadastrados recebem a senha "123456"
 
 ## 🧪 Dados de Teste
 
-A aplicação carrega automaticamente dados de teste na primeira execução:
+A aplicação vem com dados pré-cadastrados:
 
 **Turmas:** Turma A, Turma B, Turma C
 
 **Matérias:** Matemática, Português, Ciências, Geografia, História
 
 **Usuários:**
-- Diretor: admin@email.com / 123456
-- Professores: joao@email.com, ana@email.com, carlos@email.com
-- Alunos: alice@email.com, joao.aluno@email.com, maria@email.com, pedro@email.com, etc.
+- 1 Diretor (admin@email.com)
+- 3 Professores (cada um responsável por uma turma)
+- 7 Alunos (distribuídos nas 3 turmas)
 
-**Senha padrão para todos:** 123456
+**Notas:** 20 notas distribuídas entre os alunos em diferentes matérias
 
-⚠️ **NOTA DE SEGURANÇA:** Este sistema utiliza senhas em texto simples para fins educacionais e de demonstração. Em um ambiente de produção, as senhas devem ser criptografadas usando BCrypt ou algoritmo similar.
+**Observações:** 8 observações sobre diferentes alunos
+
+### Como Resetar os Dados
+
+Para voltar aos dados iniciais, abra o Console do navegador (F12) e execute:
+```javascript
+localStorage.removeItem('classeConectadaData');
+location.reload();
+```
+
+## 💾 Persistência de Dados
+
+Todos os dados são armazenados no LocalStorage do navegador:
+- Os dados são mantidos mesmo após fechar o navegador
+- Novos cadastros, edições e notas são persistidos automaticamente
+- Os dados são específicos para cada navegador/computador
+
+## 🔒 Segurança
+
+⚠️ **NOTA DE SEGURANÇA:** Este sistema foi desenvolvido para fins educacionais e de demonstração:
+- As senhas são armazenadas em texto simples
+- Não há criptografia de dados
+- Não deve ser usado em ambiente de produção sem melhorias de segurança
+
+## 🌐 Navegadores Suportados
+
+- Google Chrome (Recomendado)
+- Mozilla Firefox
+- Microsoft Edge
+- Safari
+- Opera
+
+## 📱 Responsividade
+
+O sistema é responsivo e funciona em:
+- Desktops
+- Tablets
+- Smartphones
 
 ## 🐛 Resolução de Problemas
 
-### Erro de conexão com MySQL
-- Verifique se o MySQL está rodando
-- Confirme as credenciais em application.properties
-- Certifique-se de que a porta 3306 está acessível
+### Os dados não estão sendo salvos
+- Verifique se o LocalStorage está habilitado no seu navegador
+- Certifique-se de não estar em modo anônimo/privado
 
-### Porta 8080 já em uso
-- Altere a porta em application.properties
-- Ou pare o processo que está usando a porta 8080
+### A página não carrega corretamente
+- Limpe o cache do navegador
+- Verifique se todos os arquivos foram baixados corretamente
+- Use um servidor HTTP local em vez de abrir diretamente
 
-### Erro ao compilar
-```bash
-./mvnw clean install
-```
+### Erro ao adicionar notas
+- Certifique-se de selecionar uma turma e um aluno primeiro
+- Verifique se a nota está entre 0 e 10
 
 ## 📄 Licença
 
 Este projeto é de código aberto.
 
-## 👥 Contribuidores
+## 👥 Desenvolvedor
 
 Desenvolvido por onmikronDev
 
 ## 📞 Suporte
 
 Para problemas ou dúvidas, abra uma issue no repositório.
+
+---
+
+## ✨ Novidades desta Versão (Frontend Puro)
+
+- ✅ Removido backend Spring Boot
+- ✅ Removida dependência de banco de dados MySQL
+- ✅ Implementado MockData com dados de demonstração
+- ✅ Sistema de persistência com LocalStorage
+- ✅ Aplicação totalmente funcional sem necessidade de servidor
+- ✅ Mais leve e fácil de executar
+- ✅ Perfeito para demonstrações e protótipos
