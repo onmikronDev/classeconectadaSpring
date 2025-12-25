@@ -172,7 +172,7 @@ public class UserController {
             existingUser.setTipo(tipo);
             
             // Handle turmaId for Student or Teacher
-            if (userData.containsKey("turmaId") && (tipo == UserType.ALUNO || tipo == UserType.PROFESSOR)) {
+            if (userData.containsKey("turmaId")) {
                 Object turmaIdObj = userData.get("turmaId");
                 Long turmaId = turmaIdObj instanceof Number ? ((Number) turmaIdObj).longValue() : Long.parseLong(turmaIdObj.toString());
                 SchoolClass turma = schoolClassRepository.findById(turmaId)
@@ -185,6 +185,7 @@ public class UserController {
                     ((Teacher) existingUser).setTurma(turma);
                     existingUser = teacherRepository.save((Teacher) existingUser);
                 } else {
+                    // If user is not Student or Teacher, ignore turmaId
                     existingUser = userService.update(id, existingUser);
                 }
             } else {
