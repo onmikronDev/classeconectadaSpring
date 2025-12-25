@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const materiasList = document.getElementById("materiasList");
   const notasList = document.getElementById("notasList");
+  const pageTitle = document.getElementById("pageTitle");
 
   // Obter dados do usuário logado do localStorage
   const userStr = localStorage.getItem("user");
@@ -12,6 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const user = JSON.parse(userStr);
   const studentId = user.id;
+  
+  // Atualizar título da página com o nome do usuário
+  if (pageTitle) {
+    pageTitle.textContent = `Histórico de ${user.nome}`;
+  }
 
   // Buscar notas do aluno do localStorage
   let notasPorMateria = {};
@@ -38,6 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
     li.addEventListener("click", () => filtrarNotasPorMateria(materia));
     materiasList.appendChild(li);
   });
+  
+  // Mostrar mensagem se não houver notas
+  if (Object.keys(notasPorMateria).length === 0) {
+    materiasList.innerHTML = "<li style='color: #888;'>Nenhuma matéria com notas</li>";
+    notasList.innerHTML = "<li style='color: #888;'>Nenhuma nota registrada</li>";
+  }
 
   /**
    * Filtra as notas com base na matéria selecionada
