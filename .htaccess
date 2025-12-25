@@ -1,0 +1,25 @@
+# Enable rewriting
+RewriteEngine On
+
+# Route API requests to appropriate PHP files
+RewriteRule ^api/auth/login$ api/auth/login.php [L]
+RewriteRule ^api/classes/([0-9]+)$ api/classes.php?id=$1 [L]
+RewriteRule ^api/classes$ api/classes.php [L]
+RewriteRule ^api/students/turma/([0-9]+)$ api/students.php?turma=$1 [L]
+RewriteRule ^api/students/([0-9]+)$ api/students.php?id=$1 [L]
+RewriteRule ^api/students$ api/students.php [L]
+RewriteRule ^api/grades/student/([0-9]+)/subject/([0-9]+)$ api/grades.php?student=$1&subject=$2 [L]
+RewriteRule ^api/grades/student/([0-9]+)$ api/grades.php?student=$1 [L]
+RewriteRule ^api/grades/subject/([0-9]+)$ api/grades.php?subject=$1 [L]
+RewriteRule ^api/grades/([0-9]+)$ api/grades.php?id=$1 [L]
+RewriteRule ^api/grades$ api/grades.php [L]
+RewriteRule ^api/users/tipo/(.+)$ api/users.php?tipo=$1 [L]
+RewriteRule ^api/users/([0-9]+)$ api/users.php?id=$1 [L]
+RewriteRule ^api/users$ api/users.php [L]
+RewriteRule ^api/subjects/teacher/([0-9]+)$ api/subjects.php?teacher=$1 [L]
+RewriteRule ^api/subjects/([0-9]+)$ api/subjects.php?id=$1 [L]
+RewriteRule ^api/subjects$ api/subjects.php [L]
+RewriteRule ^api/observations/student/([0-9]+)$ api/observations.php?student=$1 [L]
+RewriteRule ^api/observations/turma/([0-9]+)$ api/observations.php?turma=$1 [L]
+RewriteRule ^api/observations/([0-9]+)$ api/observations.php?id=$1 [L]
+RewriteRule ^api/observations$ api/observations.php [L]

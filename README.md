@@ -1,6 +1,6 @@
 # ClasseConectada - Sistema Educacional
 
-Sistema completo de gestão escolar com Spring Boot + HTML/CSS/JS
+Sistema completo de gestão escolar com PHP + MySQL + HTML/CSS/JS
 
 ## 📋 Descrição
 
@@ -16,13 +16,8 @@ ClasseConectada é um sistema educacional moderno que permite gerenciar:
 ## 🛠️ Tecnologias Utilizadas
 
 - **Backend:**
-  - Spring Boot 4.0.1
-  - Spring Data JPA
-  - Spring Web
-  - Spring Validation
+  - PHP 7.4+ (com PDO)
   - MySQL 8.x
-  - Lombok
-  - Maven
 
 - **Frontend:**
   - HTML5
@@ -31,10 +26,10 @@ ClasseConectada é um sistema educacional moderno que permite gerenciar:
 
 ## 📦 Pré-requisitos
 
-- Java 17 ou superior
-- Maven 3.6+
+- PHP 7.4 ou superior
 - MySQL 8.0+ (rodando em localhost:3306)
-- Usuário MySQL: `root` / Senha: `root` (ou configure no application.properties)
+- Apache ou servidor web com suporte a PHP
+- Usuário MySQL: `root` / Senha: `root` (ou configure no api/config.php)
 
 ## 🚀 Como Executar
 
@@ -45,171 +40,74 @@ cd classeconectadaSpring
 ```
 
 ### 2. Configure o MySQL
-Certifique-se de que o MySQL está rodando e que as credenciais estão corretas em `src/main/resources/application.properties`:
-```properties
-spring.datasource.username=root
-spring.datasource.password=root
-```
 
-### 3. Execute a aplicação
+Certifique-se de que o MySQL está rodando e execute o script de criação do banco de dados:
+
 ```bash
-./mvnw spring-boot:run
+mysql -u root -p < database.sql
 ```
-Ou no Windows:
+
+Ou importe o arquivo `database.sql` usando o phpMyAdmin ou outro cliente MySQL.
+
+### 3. Configure a conexão com o banco de dados
+
+Edite o arquivo `api/config.php` se necessário para ajustar as credenciais do MySQL:
+
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
+define('DB_NAME', 'classe_conectada');
+```
+
+### 4. Inicie o servidor
+
+#### Opção A: Usando o servidor embutido do PHP
 ```bash
-mvnw.cmd spring-boot:run
+php -S localhost:8000
 ```
 
-### 4. Acesse a aplicação
-- Frontend: http://localhost:8080/html/Login.html
-- API Base URL: http://localhost:8080/api
+#### Opção B: Usando Apache/XAMPP/WAMP
+- Copie o projeto para o diretório htdocs (XAMPP) ou www (WAMP)
+- Acesse via http://localhost/classeconectadaSpring
 
-### 5. Login Padrão
+### 5. Acesse a aplicação
+- Frontend: http://localhost:8000/ (ou http://localhost/classeconectadaSpring)
+- A aplicação redirecionará automaticamente para a página de login
+
+### 6. Login Padrão
 - **Email:** admin@email.com
 - **Senha:** 123456
 
 ## 📚 Estrutura do Projeto
 
 ```
-src/main/java/com/me/classeconectada/
-├── ClasseConectadaApplication.java  # Classe principal
-├── config/
-│   └── DataLoader.java              # Carrega dados iniciais
-├── model/                           # Entidades JPA
-│   ├── User.java                    # Classe base de usuário
-│   ├── Student.java                 # Aluno (extends User)
-│   ├── Teacher.java                 # Professor (extends User)
-│   ├── Director.java                # Diretor (extends User)
-│   ├── SchoolClass.java             # Turma
-│   ├── Subject.java                 # Matéria
-│   ├── Grade.java                   # Nota
-│   ├── Observation.java             # Observação
-│   └── UserType.java                # Enum de tipos de usuário
-├── repository/                      # Repositórios JPA
-├── service/                         # Serviços (lógica de negócio)
-├── controller/                      # Controllers REST
-└── dto/                            # Data Transfer Objects
-
-src/main/resources/
-├── application.properties           # Configurações
-└── static/                         # Frontend (HTML/CSS/JS)
-    ├── html/
-    ├── css/
-    ├── js/
-    └── img/
+classeconectadaSpring/
+├── index.html                    # Página principal (redireciona para login)
+├── database.sql                  # Script de criação do banco de dados
+├── .htaccess                     # Configuração de rotas (Apache)
+├── api/                          # Backend PHP
+│   ├── config.php                # Configuração do banco de dados
+│   ├── auth/
+│   │   └── login.php             # Endpoint de autenticação
+│   ├── classes.php               # Endpoint de turmas
+│   ├── students.php              # Endpoint de alunos
+│   ├── users.php                 # Endpoint de usuários
+│   ├── subjects.php              # Endpoint de matérias
+│   ├── grades.php                # Endpoint de notas
+│   └── observations.php          # Endpoint de observações
+├── html/                         # Páginas HTML
+│   ├── Login.html                # Página de login
+│   ├── index.html                # Dashboard principal
+│   ├── turma.html                # Gestão de turmas
+│   ├── cadrastro.html            # Cadastro de usuários
+│   ├── usuarios.html             # Gerenciamento de usuários
+│   ├── historico.html            # Histórico de notas
+│   └── observacoes.html          # Observações sobre alunos
+├── css/                          # Estilos CSS
+├── js/                           # Scripts JavaScript
+└── img/                          # Imagens e logos
 ```
-
-## 🌐 Endpoints da API
-
-### Autenticação
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/api/auth/login` | Login de usuário |
-
-**Exemplo de requisição:**
-```json
-{
-  "email": "admin@email.com",
-  "senha": "123456"
-}
-```
-
-### Usuários
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/users` | Listar todos os usuários ativos |
-| GET | `/api/users/{id}` | Buscar usuário por ID |
-| GET | `/api/users/tipo/{tipo}` | Filtrar por tipo (PROFESSOR, ALUNO, DIRETOR) |
-| POST | `/api/users` | Criar novo usuário |
-| PUT | `/api/users/{id}` | Atualizar usuário |
-| DELETE | `/api/users/{id}` | Desativar usuário (soft delete) |
-
-### Alunos
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/students` | Listar todos os alunos ativos |
-| GET | `/api/students/{id}` | Buscar aluno por ID |
-| GET | `/api/students/turma/{turmaId}` | Listar alunos de uma turma |
-| POST | `/api/students` | Criar novo aluno |
-| PUT | `/api/students/{id}` | Atualizar aluno |
-| DELETE | `/api/students/{id}` | Desativar aluno |
-
-### Professores
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/teachers` | Listar todos os professores ativos |
-| GET | `/api/teachers/{id}` | Buscar professor por ID |
-| GET | `/api/teachers/turma/{turmaId}` | Listar professores de uma turma |
-| POST | `/api/teachers` | Criar novo professor |
-| PUT | `/api/teachers/{id}` | Atualizar professor |
-| DELETE | `/api/teachers/{id}` | Desativar professor |
-
-### Diretores
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/directors` | Listar todos os diretores ativos |
-| GET | `/api/directors/{id}` | Buscar diretor por ID |
-| POST | `/api/directors` | Criar novo diretor |
-| PUT | `/api/directors/{id}` | Atualizar diretor |
-| DELETE | `/api/directors/{id}` | Desativar diretor |
-
-### Turmas
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/classes` | Listar todas as turmas ativas |
-| GET | `/api/classes/{id}` | Buscar turma por ID |
-| GET | `/api/classes/{id}/students` | Listar alunos de uma turma |
-| POST | `/api/classes` | Criar nova turma |
-| PUT | `/api/classes/{id}` | Atualizar turma |
-| DELETE | `/api/classes/{id}` | Desativar turma |
-
-### Matérias
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/subjects` | Listar todas as matérias ativas |
-| GET | `/api/subjects/{id}` | Buscar matéria por ID |
-| GET | `/api/subjects/teacher/{teacherId}` | Listar matérias de um professor |
-| POST | `/api/subjects` | Criar nova matéria |
-| PUT | `/api/subjects/{id}` | Atualizar matéria |
-| DELETE | `/api/subjects/{id}` | Desativar matéria |
-
-### Notas
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/grades` | Listar todas as notas |
-| GET | `/api/grades/{id}` | Buscar nota por ID |
-| GET | `/api/grades/student/{studentId}` | Listar notas de um aluno |
-| GET | `/api/grades/student/{studentId}/subject/{subjectId}` | Notas de um aluno em uma matéria |
-| GET | `/api/grades/subject/{subjectId}` | Listar notas de uma matéria |
-| POST | `/api/grades` | Aplicar nova nota |
-| PUT | `/api/grades/{id}` | Atualizar nota |
-| DELETE | `/api/grades/{id}` | Deletar nota |
-
-**Exemplo de requisição para criar nota:**
-```json
-{
-  "student": {
-    "id": 1
-  },
-  "subject": {
-    "id": 1
-  },
-  "value": 8.5,
-  "description": "Prova Bimestral",
-  "examDate": "2024-12-23"
-}
-```
-
-### Observações
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/observations` | Listar todas as observações |
-| GET | `/api/observations/{id}` | Buscar observação por ID |
-| GET | `/api/observations/student/{studentId}` | Observações de um aluno |
-| GET | `/api/observations/turma/{turmaId}` | Observações de uma turma |
-| POST | `/api/observations` | Criar nova observação |
-| PUT | `/api/observations/{id}` | Atualizar observação |
-| DELETE | `/api/observations/{id}` | Deletar observação |
 
 ## 🎯 Funcionalidades
 
@@ -222,34 +120,19 @@ src/main/resources/
 - **Histórico** (historico.html) - Notas e histórico do aluno
 - **Observações** (observacoes.html) - Observações sobre alunos
 
-### Recursos do Backend
+### Recursos do Sistema
 - ✅ API REST completa com CRUD
-- ✅ Validação de dados com Bean Validation
-- ✅ Herança de entidades (User → Student, Teacher, Director)
-- ✅ Relacionamentos JPA (OneToMany, ManyToOne)
-- ✅ Soft Delete (campo active)
+- ✅ Conexão com MySQL via PDO
+- ✅ Validação de dados
+- ✅ Soft Delete (campo ativo)
 - ✅ CORS habilitado para frontend
 - ✅ Dados iniciais automáticos
 - ✅ Validação de notas (0-10)
-
-## 🔧 Configurações Avançadas
-
-### Alterar Porta do Servidor
-Edite `application.properties`:
-```properties
-server.port=8081
-```
-
-### Alterar Modo de Criação do Schema
-```properties
-spring.jpa.hibernate.ddl-auto=create  # Recria o schema a cada execução
-spring.jpa.hibernate.ddl-auto=update  # Atualiza o schema (padrão)
-spring.jpa.hibernate.ddl-auto=none    # Não altera o schema
-```
+- ✅ Interface responsiva
 
 ## 🧪 Dados de Teste
 
-A aplicação carrega automaticamente dados de teste na primeira execução:
+A aplicação carrega automaticamente dados de teste na primeira execução do script SQL:
 
 **Turmas:** Turma A, Turma B, Turma C
 
@@ -262,23 +145,27 @@ A aplicação carrega automaticamente dados de teste na primeira execução:
 
 **Senha padrão para todos:** 123456
 
-⚠️ **NOTA DE SEGURANÇA:** Este sistema utiliza senhas em texto simples para fins educacionais e de demonstração. Em um ambiente de produção, as senhas devem ser criptografadas usando BCrypt ou algoritmo similar.
+⚠️ **NOTA DE SEGURANÇA:** Este sistema utiliza senhas em texto simples para fins educacionais e de demonstração. Em um ambiente de produção, as senhas devem ser criptografadas usando password_hash() do PHP.
 
 ## 🐛 Resolução de Problemas
 
 ### Erro de conexão com MySQL
 - Verifique se o MySQL está rodando
-- Confirme as credenciais em application.properties
+- Confirme as credenciais em api/config.php
 - Certifique-se de que a porta 3306 está acessível
+- Verifique se o banco de dados 'classe_conectada' foi criado
 
-### Porta 8080 já em uso
-- Altere a porta em application.properties
-- Ou pare o processo que está usando a porta 8080
+### Porta 8000 já em uso
+- Use outra porta: `php -S localhost:8080`
+- Ou pare o processo que está usando a porta 8000
 
-### Erro ao compilar
-```bash
-./mvnw clean install
-```
+### Erro de CORS
+- Se estiver usando Apache, certifique-se de que mod_rewrite está habilitado
+- Verifique se o arquivo .htaccess está presente no diretório raiz
+
+### Erro 404 nas requisições da API
+- Verifique se o mod_rewrite do Apache está habilitado
+- Ou acesse diretamente os arquivos PHP com extensão .php
 
 ## 📄 Licença
 
