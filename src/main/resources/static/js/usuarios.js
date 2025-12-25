@@ -101,7 +101,7 @@ function filterUsers() {
 }
 
 // Abrir modal de edição
-async function openEditModal(id) {
+function openEditModal(id) {
   const user = usuarios.find(u => u.id === id);
   if (!user) return;
 
@@ -111,10 +111,6 @@ async function openEditModal(id) {
   document.getElementById("editEmail").value = user.email;
   document.getElementById("editTelefone").value = user.telefone || "";
   document.getElementById("editTipo").value = user.tipo.toLowerCase();
-
-  // Carregar turmas e matérias antes de abrir o modal
-  await carregarTurmas();
-  await carregarMaterias();
   
   // Preencher dropdowns
   preencherDropdownTurmas();
@@ -247,4 +243,10 @@ window.addEventListener("click", (e) => {
 });
 
 // ✅ CORRIGIDO: Inicializar carregando dados da API
-carregarUsuarios();
+async function inicializar() {
+  await carregarUsuarios();
+  await carregarTurmas();
+  await carregarMaterias();
+}
+
+inicializar();
