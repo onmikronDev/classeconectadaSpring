@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const materiasList = document.getElementById("materiasList");
-  const notasList = document.getElementById("notasList");
+  const observacoesList = document.getElementById("observacoesList");
 
   // ✅ CORRIGIDO: Obter studentId da URL (similar ao historico.js)
   const urlParams = new URLSearchParams(window.location.search);
@@ -11,6 +10,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = 'turma.html';
     return;
   }
+
+  let observacoes = [];
+  let observacaoSelecionada = null;
+  let observacaoSelecionadaObj = null;
+
+  // Modal de edição
+  const editModal = document.getElementById("editModal");
+  const closeEditModal = document.getElementById("closeEditModal");
+  const editForm = document.getElementById("editForm");
+  const editObservationId = document.getElementById("editObservationId");
+  const editObservationContent = document.getElementById("editObservationContent");
+  const editObservationDate = document.getElementById("editObservationDate");
 
   // ✅ CORRIGIDO: Carregar observações da API
   await carregarObservacoes(studentId);
@@ -34,21 +45,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Buscar observações do aluno
       const observacoesResponse = await fetch(`http://localhost:8080/api/observations/student/${studentId}`);
       if (!observacoesResponse.ok) throw new Error('Erro ao carregar observações');
-      const observacoes = await observacoesResponse.json();
+      observacoes = await observacoesResponse.json();
 
       // Preencher lista de observações
-      notasList.innerHTML = "";
-      if (observacoes.length === 0) {
-        notasList.innerHTML = "<li>Nenhuma observação registrada</li>";
-      } else {
-        observacoes.forEach(obs => {
-          const li = document.createElement("li");
-          const dataFormatada = obs.date ? new Date(obs.date).toLocaleDateString('pt-BR') : 'N/A';
-          li.textContent = `${dataFormatada}: ${obs.description || obs.text || 'Sem descrição'}`;
-          li.addEventListener("click", () => selecionarObservacao(li, obs));
-          notasList.appendChild(li);
-        });
-      }
+      renderObservacoes();
 
     } catch (error) {
       console.error('Erro ao carregar observações:', error);
@@ -56,34 +56,120 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  let observacaoSelecionada = null;
+  function renderObservacoes() {
+    observacoesList.innerHTML = "";
+    if (observacoes.length === 0) {
+      observacoesList.innerHTML = "<li>Nenhuma observação registrada</li>";
+    } else {
+      observacoes.forEach(obs => {
+        const li = document.createElement("li");
+        const dataFormatada = obs.date ? new Date(obs.date).toLocaleDateString('pt-BR') : 'N/A';
+        const conteudo = obs.content || 'Sem descrição';
+        li.textContent = `${dataFormatada}: ${conteudo}`;
+        li.dataset.observationId = obs.id;
+        li.addEventListener("click", () => selecionarObservacao(li, obs));
+        observacoesList.appendChild(li);
+      });
+    }
+  }
 
   // Seleciona uma observação
   function selecionarObservacao(li, observacao) {
     if (observacaoSelecionada) observacaoSelecionada.classList.remove("selected");
     observacaoSelecionada = li;
+    observacaoSelecionadaObj = observacao;
     observacaoSelecionada.classList.add("selected");
-    
-    const texto = observacao.description || observacao.text || 'Sem descrição';
-    const data = observacao.date ? new Date(observacao.date).toLocaleDateString('pt-BR') : 'N/A';
-    alert(`Observação Selecionada:\nData: ${data}\nTexto: ${texto}`);
   }
+
+  // Botão Visualizar
+  document.getElementById("visualizarBtn").addEventListener("click", () => {
+    if (observacaoSelecionadaObj) {
+      const texto = observacaoSelecionadaObj.content || 'Sem descrição';
+      const data = observacaoSelecionadaObj.date ? new Date(observacaoSelecionadaObj.date).toLocaleDateString('pt-BR') : 'N/A';
+      alert(`Observação:\nData: ${data}\nConteúdo: ${texto}`);
+    } else {
+      alert("Selecione uma observação para visualizar.");
+    }
+  });
 
   // Botão Editar
   document.getElementById("editarBtn").addEventListener("click", () => {
-    if (observacaoSelecionada) {
-      alert(`Editando observação:\n${observacaoSelecionada.textContent}`);
+    if (observacaoSelecionadaObj) {
+      // Preencher modal com dados da observação
+      editObservationId.value = observacaoSelecionadaObj.id;
+      editObservationContent.value = observacaoSelecionadaObj.content || '';
+      editObservationDate.value = observacaoSelecionadaObj.date || '';
+      editModal.style.display = "flex";
     } else {
       alert("Selecione uma observação para editar.");
     }
   });
 
+  // Fechar modal
+  closeEditModal.addEventListener("click", () => {
+    editModal.style.display = "none";
+  });
+
+  // Salvar edição
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = parseInt(editObservationId.value);
+    const content = editObservationContent.value;
+    const date = editObservationDate.value;
+
+    const observationData = {
+      content: content,
+      date: date,
+      student: { id: parseInt(studentId) }
+    };
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/observations/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(observationData)
+      });
+
+      if (response.ok) {
+        alert("Observação atualizada com sucesso!");
+        editModal.style.display = "none";
+        await carregarObservacoes(studentId);
+        observacaoSelecionada = null;
+        observacaoSelecionadaObj = null;
+      } else {
+        const error = await response.json();
+        alert(`Erro ao atualizar observação: ${error.error || 'Erro desconhecido'}`);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar observação:', error);
+      alert('Erro ao conectar com o servidor.');
+    }
+  });
+
   // Botão Deletar
-  document.getElementById("deletarBtn").addEventListener("click", () => {
-    if (observacaoSelecionada) {
-      alert(`Deletando observação:\n${observacaoSelecionada.textContent}`);
-      notasList.removeChild(observacaoSelecionada);
-      observacaoSelecionada = null;
+  document.getElementById("deletarBtn").addEventListener("click", async () => {
+    if (observacaoSelecionadaObj) {
+      if (!confirm(`Tem certeza que deseja deletar esta observação?\n${observacaoSelecionadaObj.content}`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/observations/${observacaoSelecionadaObj.id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok || response.status === 204) {
+          alert("Observação deletada com sucesso!");
+          await carregarObservacoes(studentId);
+          observacaoSelecionada = null;
+          observacaoSelecionadaObj = null;
+        } else {
+          alert('Erro ao deletar observação.');
+        }
+      } catch (error) {
+        console.error('Erro ao deletar observação:', error);
+        alert('Erro ao conectar com o servidor.');
+      }
     } else {
       alert("Selecione uma observação para deletar.");
     }
@@ -93,4 +179,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("voltarBtn").addEventListener("click", () => {
     window.location.href = "turma.html";
   });
-});11
+});
