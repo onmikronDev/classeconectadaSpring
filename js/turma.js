@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const turmaList = document.getElementById("turmaList");
   const alunosList = document.getElementById("alunosList");
+  const historicoBtn = document.getElementById("historicoBtn");
 
   // Modal de Aplicar Nota
   const notaModal = document.getElementById("notaModal");
@@ -80,13 +81,31 @@ document.addEventListener("DOMContentLoaded", () => {
     turmaSelecionada = { element: li, data: turma };
     turmaSelecionada.element.classList.add("selected");
     carregarAlunos(turma);
+    
+    // Desabilitar botão de histórico ao mudar de turma
+    alunoSelecionado = null;
+    historicoBtn.disabled = true;
   }
 
   function selecionarAluno(li, aluno) {
     if (alunoSelecionado) alunoSelecionado.element.classList.remove("selected");
     alunoSelecionado = { element: li, data: aluno };
     alunoSelecionado.element.classList.add("selected");
+    
+    // Habilitar botão de histórico quando aluno é selecionado
+    historicoBtn.disabled = false;
   }
+
+  // Botão Histórico
+  historicoBtn.addEventListener("click", () => {
+    if (alunoSelecionado) {
+      // Salvar o aluno selecionado no localStorage para a página de histórico
+      localStorage.setItem("selectedStudent", JSON.stringify(alunoSelecionado.data));
+      window.location.href = "../html/historico.html";
+    } else {
+      alert("Selecione um aluno para ver o histórico.");
+    }
+  });
 
   document.getElementById("notasBtn").addEventListener("click", () => {
     if (alunoSelecionado && turmaSelecionada) {

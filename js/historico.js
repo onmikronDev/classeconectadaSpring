@@ -3,20 +3,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const notasList = document.getElementById("notasList");
   const pageTitle = document.getElementById("pageTitle");
 
-  // Obter dados do usuário logado do localStorage
-  const userStr = localStorage.getItem("user");
-  if (!userStr) {
-    alert("Usuário não autenticado. Redirecionando para login.");
-    window.location.href = "Login.html";
+  // Obter dados do aluno selecionado do localStorage
+  const selectedStudentStr = localStorage.getItem("selectedStudent");
+  
+  if (!selectedStudentStr) {
+    alert("Nenhum aluno selecionado. Redirecionando para turmas.");
+    window.location.href = "turma.html";
     return;
   }
 
-  const user = JSON.parse(userStr);
-  const studentId = user.id;
+  const student = JSON.parse(selectedStudentStr);
+  const studentId = student.id;
   
-  // Atualizar título da página com o nome do usuário
+  // Atualizar título da página com o nome do aluno selecionado
   if (pageTitle) {
-    pageTitle.textContent = `Histórico de ${user.nome}`;
+    pageTitle.textContent = `Histórico de ${student.nome}`;
   }
 
   // Buscar notas do aluno do localStorage
@@ -75,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Botão Voltar
   document.getElementById("voltarBtn").addEventListener("click", () => {
-    window.location.href = "turma.html"; // Exemplo: volta para lista de turmas
+    // Limpar o aluno selecionado ao voltar
+    localStorage.removeItem("selectedStudent");
+    window.location.href = "turma.html";
   });
 });
