@@ -99,7 +99,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ✅ CORRIGIDO: Submissão integrada com API
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("Form submit intercepted"); // Debug log
     
     const activeTab = document.querySelector(".tab-button.active");
     if (!activeTab) {
@@ -119,7 +118,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Validação de email
     const email = formData.get("email");
-    if (!email || !email.includes('@')) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
       alert("Email inválido!");
       return;
     }
@@ -149,8 +149,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         userData.turmaId = parseInt(turmaId);
       }
     }
-
-    console.log("Sending data:", userData); // Debug log
 
     // ✅ CORRIGIDO: Enviar para API
     try {
