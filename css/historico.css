@@ -33,6 +33,26 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+.main-header2 {
+  background-color: #4D8889;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 24px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.logo-turma {
+  text-align: center;
+}
+
+.logo-turma h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #58D68D;
+  font-weight: 700;
+}
+
 .logo {
   display: flex;
   justify-content: left;
