@@ -70,19 +70,25 @@ body {
   font-size:  18px;
   color:  white;
   background-color:  #254C50;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+  outline: none;
 }
 
 .menu-button:hover {
   background-color: #3C5C61;
   transform: scale(1.05);
+}
+
+.menu-button:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .menu-button .icon {
@@ -130,13 +136,20 @@ body {
   padding: 12px 15px;
   background-color: #2E6264;
   margin: 10px 0;
+  border: 2px solid transparent;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  outline: none;
 }
 
 .modal-content ul li:hover {
   background-color: #254C50;
+}
+
+.modal-content ul li:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 /* Botão fechar modal */

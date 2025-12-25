@@ -39,19 +39,6 @@ body {
 }
 
 
-.button{
-
-  padding: 12px 20px; /* Padding interno para botões */
-  background-color: #45A049; /* Verde padrão */
-  color: white;
-  border: none; /* Sem borda padrão */
-  border-radius: 5px; /* Arredondado */
-  cursor: pointer; /* Indica interatividade */
-  font-size: 16px; /* Tamanho do texto */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra leve */
-  transition: transform 0.2s, background-color 0.2s; /* Suavidade das ações */
-}
-
 /* Container Principal */
 .cadastro-container {
   flex: 1;
@@ -64,7 +51,7 @@ body {
   padding: 40px;
 }
 
-. page-title {
+.page-title {
   text-align: center;
   font-size: 32px;
   margin:  0 0 30px;
@@ -78,15 +65,16 @@ body {
   margin-bottom:  30px;
 }
 
-. tab-button {
+.tab-button {
   padding:  12px 24px;
   font-size: 16px;
   color: white;
   background-color: #2E6264;
-  border:  none;
+  border:  2px solid transparent;
   border-radius:  8px;
   cursor:  pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s, transform 0.2s, border-color 0.3s;
+  outline: none;
 }
 
 .tab-button:hover {
@@ -97,6 +85,11 @@ body {
 .tab-button.active {
   background-color: #45A049;
   font-weight: bold;
+}
+
+.tab-button:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 /* Formulário */
@@ -130,9 +123,19 @@ body {
   font-size: 16px;
   color: white;
   background-color: #2E6264;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 6px;
   box-shadow:  inset 0px 2px 4px rgba(0, 0, 0, 0.3);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  background-color: #254C50;
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .form-group textarea {
@@ -153,27 +156,22 @@ body {
   margin-top: 20px;
 }
 
-.tab-button{
-  padding: 12px 20px; /* Padding interno para botões */
-  background-color: #45A049; /* Verde padrão */
-  color: white;
-  border: none; /* Sem borda padrão */
-  border-radius: 5px; /* Arredondado */
-  cursor: pointer; /* Indica interatividade */
-  font-size: 16px; /* Tamanho do texto */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra leve */
-  transition: transform 0.2s, background-color 0.2s; /* Suavidade das ações */
-}
-
 .submit-button,
 .cancel-button {
   padding: 14px 28px;
   font-size:  18px;
   color: white;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s, transform 0.2s, border-color 0.3s;
+  outline: none;
+}
+
+.submit-button:focus,
+.cancel-button:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .submit-button {
