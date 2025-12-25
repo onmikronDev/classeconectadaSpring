@@ -146,12 +146,64 @@ public class UserController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @Valid @RequestBody User user) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Map<String, Object> userData) {
         try {
-            User updatedUser = userService.update(id, user);
-            return ResponseEntity.ok(updatedUser);
+            User existingUser = userService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            
+            String nome = (String) userData.get("nome");
+            String email = (String) userData.get("email");
+            String cpf = (String) userData.get("cpf");
+            String telefone = (String) userData.get("telefone");
+            String tipoStr = (String) userData.get("tipo");
+            
+            if (nome == null || email == null || tipoStr == null) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "Campos obrigatórios: nome, email, tipo");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+            }
+            
+            UserType tipo = UserType.valueOf(tipoStr.toUpperCase());
+            
+            existingUser.setNome(nome);
+            existingUser.setEmail(email);
+            existingUser.setCpf(cpf);
+            existingUser.setTelefone(telefone);
+            existingUser.setTipo(tipo);
+            
+            // Handle turmaId for Student or Teacher
+            if (userData.containsKey("turmaId") && (tipo == UserType.ALUNO || tipo == UserType.PROFESSOR)) {
+                Object turmaIdObj = userData.get("turmaId");
+                Long turmaId = turmaIdObj instanceof Number ? ((Number) turmaIdObj).longValue() : Long.parseLong(turmaIdObj.toString());
+                SchoolClass turma = schoolClassRepository.findById(turmaId)
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+                
+                if (existingUser instanceof Student) {
+                    ((Student) existingUser).setTurma(turma);
+                    existingUser = studentRepository.save((Student) existingUser);
+                } else if (existingUser instanceof Teacher) {
+                    ((Teacher) existingUser).setTurma(turma);
+                    existingUser = teacherRepository.save((Teacher) existingUser);
+                } else {
+                    existingUser = userService.update(id, existingUser);
+                }
+            } else {
+                existingUser = userService.update(id, existingUser);
+            }
+            
+            return ResponseEntity.ok(existingUser);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Tipo de usuário inválido: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Erro ao atualizar usuário: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
     

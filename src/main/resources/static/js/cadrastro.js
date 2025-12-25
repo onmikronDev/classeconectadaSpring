@@ -120,13 +120,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userData = {
       nome: formData.get("nomeCompleto"),
       email: email,
-      senha: "123456", // Senha padrão
+      senha: formData.get("senha") || "123456", // Usar senha do form ou padrão
       cpf: cpf,
       telefone: formData.get("telefone"),
       tipo: activeTab.toUpperCase(),
       endereco: formData.get("endereco"),
-      pai: formData.get("pai"),
-      mae: formData.get("mae")
+      pai: formData.get("pai") || "",
+      mae: formData.get("mae") || ""
     };
 
     // ✅ CORRIGIDO: Adicionar turmaId para aluno e professor
