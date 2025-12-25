@@ -1,10 +1,10 @@
 /* Estilo Global */
 body {
-  margin:  0;
+  margin: 0;
   padding: 0;
-  font-family:  Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #4D8889;
-  color:  white;
+  color: white;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@ body {
   width: clamp(150px, 50vw, 150px);
   height: auto;
   max-width: 95vw;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
 }
 
 
@@ -64,10 +64,12 @@ body {
   padding: 40px;
 }
 
-. page-title {
+.page-title {
   text-align: center;
   font-size: 32px;
-  margin:  0 0 30px;
+  margin: 0 0 30px;
+  color: #58D68D;
+  font-weight: 700;
 }
 
 /* Abas */
@@ -75,22 +77,22 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom:  30px;
+  margin-bottom: 30px;
 }
 
-. tab-button {
-  padding:  12px 24px;
+.tab-button {
+  padding: 12px 24px;
   font-size: 16px;
   color: white;
   background-color: #2E6264;
-  border:  none;
-  border-radius:  8px;
-  cursor:  pointer;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
 }
 
 .tab-button:hover {
-  background-color:  #254C50;
+  background-color: #254C50;
   transform: translateY(-2px);
 }
 
@@ -101,8 +103,8 @@ body {
 
 /* Formulário */
 .cadastro-form {
-  display:  flex;
-  flex-direction:  column;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
@@ -119,7 +121,7 @@ body {
 
 .form-group label {
   margin-bottom: 8px;
-  font-weight:  bold;
+  font-weight: bold;
   font-size: 16px;
 }
 
@@ -132,7 +134,16 @@ body {
   background-color: #2E6264;
   border: none;
   border-radius: 6px;
-  box-shadow:  inset 0px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  background-color: #254C50;
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.3), 0px 0px 0px 2px #58D68D;
 }
 
 .form-group textarea {
@@ -149,7 +160,7 @@ body {
 .form-actions {
   display: flex;
   gap: 15px;
-  justify-content:  center;
+  justify-content: center;
   margin-top: 20px;
 }
 
@@ -168,7 +179,7 @@ body {
 .submit-button,
 .cancel-button {
   padding: 14px 28px;
-  font-size:  18px;
+  font-size: 18px;
   color: white;
   border: none;
   border-radius: 8px;
@@ -182,7 +193,7 @@ body {
 
 .submit-button:hover {
   background-color: #66BB6A;
-  transform:  scale(1.05);
+  transform: scale(1.05);
 }
 
 .cancel-button {
@@ -209,7 +220,7 @@ body {
   .form-row, .dynamic-fields {
     flex-direction: column;
   }
-  . tabs {
+  .tabs {
     flex-direction: column;
   }
 }

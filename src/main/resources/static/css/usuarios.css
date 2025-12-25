@@ -1,8 +1,10 @@
+/* css - conteudo atualizado de `css/usuarios.css` */
+
 /* Estilo Global */
 body {
-  margin:  0;
+  margin: 0;
   padding: 0;
-  font-family:  Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #4D8889;
   color: white;
   min-height: 100vh;
@@ -72,7 +74,7 @@ body {
   flex-direction: column;
 }
 
-. filter-group label {
+.filter-group label {
   margin-bottom: 8px;
   font-weight: bold;
   font-size: 16px;
@@ -81,9 +83,9 @@ body {
 .filter-group select,
 .filter-group input {
   padding: 12px;
-  font-size:  16px;
-  color:  white;
-  background-color:  #2E6264;
+  font-size: 16px;
+  color: white;
+  background-color: #2E6264;
   border: none;
   border-radius: 6px;
   box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.3);
@@ -98,7 +100,7 @@ body {
   overflow-x: auto;
   margin-bottom: 30px;
   border-radius: 8px;
-  box-shadow:  0px 3px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .usuarios-table {
@@ -137,14 +139,14 @@ body {
   display: inline-block;
   padding: 4px 12px;
   border-radius: 12px;
-  font-size:  13px;
-  font-weight:  600;
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
-. badge. professor {
-  background-color:  #58D68D;
-  color:  #1F4F51;
+.badge.professor {
+  background-color: #58D68D;
+  color: #1F4F51;
 }
 
 .badge.aluno {
@@ -153,7 +155,7 @@ body {
 }
 
 .badge.diretor {
-  background-color:  #F39C12;
+  background-color: #F39C12;
   color: #7D4F00;
 }
 
@@ -189,7 +191,7 @@ body {
 }
 
 .delete-btn:hover {
-  background-color:  #C0392B;
+  background-color: #C0392B;
   transform: scale(1.05);
 }
 
@@ -202,13 +204,13 @@ body {
 
 .back-button {
   padding: 14px 32px;
-  font-size:  18px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
   background-color: #2E6264;
-  border:  none;
-  border-radius:  8px;
-  cursor:  pointer;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
 }
@@ -236,22 +238,22 @@ body {
   width: 90%;
   max-width: 600px;
   max-height: 85vh;
-  overflow-y:  auto;
-  border-radius:  10px;
-  padding:  30px;
-  box-shadow:  0px 4px 15px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .modal-content h2 {
   text-align: center;
-  margin:  0 0 25px;
+  margin: 0 0 25px;
 }
 
 .close-btn {
   position: absolute;
-  top:  15px;
+  top: 15px;
   right: 20px;
-  font-size:  28px;
+  font-size: 28px;
   color: white;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -262,9 +264,9 @@ body {
 }
 
 /* Formulário de Edição */
-. edit-form {
-  display:  flex;
-  flex-direction:  column;
+.edit-form {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
@@ -280,7 +282,7 @@ body {
 }
 
 .form-group input,
-. form-group select {
+.form-group select {
   padding: 12px;
   font-size: 16px;
   color: white;
@@ -293,19 +295,19 @@ body {
 .form-actions {
   display: flex;
   gap: 15px;
-  justify-content:  center;
+  justify-content: center;
   margin-top: 10px;
 }
 
 .save-button,
 .cancel-button {
   padding: 12px 28px;
-  font-size:  17px;
+  font-size: 17px;
   font-weight: 600;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition:  all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .save-button {
@@ -314,8 +316,8 @@ body {
 }
 
 .save-button:hover {
-  background-color:  #58D68D;
-  transform:  scale(1.05);
+  background-color: #58D68D;
+  transform: scale(1.05);
 }
 
 .cancel-button {
@@ -324,7 +326,7 @@ body {
 }
 
 .cancel-button:hover {
-  background-color:  #C0392B;
+  background-color: #C0392B;
   transform: scale(1.05);
 }
 
@@ -355,7 +357,7 @@ body {
   }
 
   .action-buttons {
-    flex-direction:  column;
+    flex-direction: column;
   }
 }
 
@@ -364,13 +366,13 @@ body {
     font-size: 26px;
   }
 
-  . usuarios-table th,
+  .usuarios-table th,
   .usuarios-table td {
-    padding:  8px;
+    padding: 8px;
     font-size: 13px;
   }
 
-  . badge {
+  .badge {
     font-size: 11px;
     padding: 3px 8px;
   }
