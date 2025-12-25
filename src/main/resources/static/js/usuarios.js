@@ -1,5 +1,7 @@
 // ✅ CORRIGIDO: Dados carregados da API
 let usuarios = [];
+let turmas = [];
+let materias = [];
 
 let currentEditId = null;
 
@@ -26,6 +28,30 @@ async function carregarUsuarios() {
   } catch (error) {
     console.error('Erro ao carregar usuários:', error);
     alert('Erro ao carregar usuários. Verifique se o backend está rodando.');
+  }
+}
+
+// Carregar turmas da API
+async function carregarTurmas() {
+  try {
+    const response = await fetch('http://localhost:8080/api/classes');
+    if (!response.ok) throw new Error('Erro ao carregar turmas');
+    
+    turmas = await response.json();
+  } catch (error) {
+    console.error('Erro ao carregar turmas:', error);
+  }
+}
+
+// Carregar matérias da API
+async function carregarMaterias() {
+  try {
+    const response = await fetch('http://localhost:8080/api/subjects');
+    if (!response.ok) throw new Error('Erro ao carregar matérias');
+    
+    materias = await response.json();
+  } catch (error) {
+    console.error('Erro ao carregar matérias:', error);
   }
 }
 
@@ -75,7 +101,7 @@ function filterUsers() {
 }
 
 // Abrir modal de edição
-function openEditModal(id) {
+async function openEditModal(id) {
   const user = usuarios.find(u => u.id === id);
   if (!user) return;
 
@@ -85,11 +111,48 @@ function openEditModal(id) {
   document.getElementById("editEmail").value = user.email;
   document.getElementById("editTelefone").value = user.telefone || "";
   document.getElementById("editTipo").value = user.tipo.toLowerCase();
-  document.getElementById("editTurma").value = user.turma ? user.turma.id : "";
-  document.getElementById("editMateria").value = "";
 
+  // Carregar turmas e matérias antes de abrir o modal
+  await carregarTurmas();
+  await carregarMaterias();
+  
+  // Preencher dropdowns
+  preencherDropdownTurmas();
+  preencherDropdownMaterias();
+  
+  // Selecionar valores atuais
+  if (user.turma) {
+    document.getElementById("editTurma").value = user.turma.id;
+  }
+  
   updateEditFields();
   editModal.style.display = "flex";
+}
+
+// Preencher dropdown de turmas
+function preencherDropdownTurmas() {
+  const select = document.getElementById("editTurma");
+  select.innerHTML = '<option value="">Selecione uma turma</option>';
+  
+  turmas.forEach(turma => {
+    const option = document.createElement("option");
+    option.value = turma.id;
+    option.textContent = turma.name;
+    select.appendChild(option);
+  });
+}
+
+// Preencher dropdown de matérias
+function preencherDropdownMaterias() {
+  const select = document.getElementById("editMateria");
+  select.innerHTML = '<option value="">Selecione uma matéria</option>';
+  
+  materias.forEach(materia => {
+    const option = document.createElement("option");
+    option.value = materia.id;
+    option.textContent = materia.name;
+    select.appendChild(option);
+  });
 }
 
 // Atualizar campos dinâmicos no modal
@@ -109,14 +172,21 @@ function closeModal() {
 editForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = parseInt(document.getElementById("editId").value);
+  const tipo = document.getElementById("editTipo").value.toUpperCase();
 
   const userData = {
     nome: document.getElementById("editNome").value,
     email: document.getElementById("editEmail").value,
     telefone: document.getElementById("editTelefone").value,
-    tipo: document.getElementById("editTipo").value.toUpperCase(),
+    tipo: tipo,
     cpf: usuarios.find(u => u.id === id)?.cpf || ""
   };
+  
+  // Adicionar turmaId se aplicável
+  const turmaId = document.getElementById("editTurma").value;
+  if (turmaId && (tipo === "ALUNO" || tipo === "PROFESSOR")) {
+    userData.turmaId = parseInt(turmaId);
+  }
 
   try {
     const response = await fetch(`http://localhost:8080/api/users/${id}`, {
