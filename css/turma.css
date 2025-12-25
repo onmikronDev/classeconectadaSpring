@@ -64,11 +64,17 @@ body {
   font-size: 16px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, background-color 0.3s ease;
+  outline: none;
 }
 
 .button:hover {
   background-color: #66BB6A;
   transform: scale(1.05);
+}
+
+.button:focus {
+  border: 2px solid #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 /* Contêiner Principal */
@@ -113,11 +119,18 @@ body {
   padding: 10px 15px;
   margin: 10px 0;
   background-color: #346767;
+  border: 2px solid transparent;
   border-radius: 5px;
   cursor: pointer;
   text-align: left;
   align-items: center; /* Alinha botões com nomes */
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  outline: none;
+}
+
+.list ul li:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .list ul li.selected {
@@ -140,11 +153,17 @@ body {
   padding: 8px 15px;
   font-size: 14px;
   color: white;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 6px;
   cursor: pointer;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  outline: none;
+}
+
+.presence-options button:focus {
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .presence-options .present {
@@ -217,9 +236,19 @@ body {
   font-size: 16px;
   color: white;
   background-color: #2E6264;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 5px;
   box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.3);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.modal-content select:focus {
+  background-color: #254C50;
+  border-color: #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 textarea {
@@ -238,11 +267,17 @@ textarea {
   font-size: 16px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, background-color 0.3s ease;
+  outline: none;
 }
 
 .submit-button:hover {
   background-color: #66BB6A;
   transform: scale(1.05);
+}
+
+.submit-button:focus {
+  border: 2px solid #58D68D;
+  box-shadow: 0 0 0 3px rgba(88, 214, 141, 0.2);
 }
 
 .close-btn {
