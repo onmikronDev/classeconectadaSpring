@@ -84,6 +84,9 @@ function openEditModal(id) {
   editModal.style.display = "flex";
 }
 
+// Make function globally accessible
+window.openEditModal = openEditModal;
+
 // Atualizar campos dinâmicos no modal
 function updateEditFields() {
   const tipo = editTipo.value;
@@ -130,6 +133,9 @@ function deleteUser(id) {
     carregarUsuarios();
   }
 }
+
+// Make function globally accessible
+window.deleteUser = deleteUser;
 
 // Event Listeners
 filterTipo.addEventListener("change", filterUsers);
